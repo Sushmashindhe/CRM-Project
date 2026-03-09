@@ -9,6 +9,9 @@ namespace CRM.Data
         {
         }
 
+        public DbSet<Managers> Managers { get; set; }
+
+
         public DbSet<Employees> Employees { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -17,6 +20,7 @@ namespace CRM.Data
                 new Employees { Id = 1, Name = "Virat",Email="virat@gmail.com", Phone="+91 12222222"},
                 new Employees { Id = 2, Name = "Rohit",Email="rohit@gmail.com", Phone="+91 66666666"}
             );
+           
         }
     }
 }
