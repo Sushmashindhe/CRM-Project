@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Manager Dashboard</title>
+</head>
+
+<body>
+
+    <h1>Manager Dashboard</h1>
+
+    <button onclick="loadData()">Load Data</button>
+
+    <p id="result"></p>
+
+    <script>
+
+function loadData(){
+
+fetch("https://localhost:5001/api/dashboard",{
+
+headers:{
+"Authorization":"Bearer "+localStorage.getItem("token")
+}
+
+})
+
+.then(res=>res.text())
+
+.then(data=>{
+document.getElementById("result").innerText=data;
+})
+
+}
+
+    </script>
+
+</body>
+
+</html>
