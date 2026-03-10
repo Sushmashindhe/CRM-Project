@@ -2,36 +2,273 @@
 <html>
 
 <head>
+
     <title>Manager Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+
+        body {
+            background: #f4f6fb;
+        }
+
+        .profile-card {
+            background: linear-gradient(135deg,#1d3557,#457b9d);
+            color: white;
+            border-radius: 12px;
+        }
+
+        .dashboard-card {
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+
 </head>
 
-<body>
+<body class="container py-5">
 
-    <h1>Manager Dashboard</h1>
+    <h2 class="mb-4">Manager Dashboard</h2>
 
-    <button onclick="loadData()">Load Data</button>
+    <!-- Manager Profile -->
 
-    <p id="result"></p>
+    <div class="card profile-card p-4 mb-4">
+
+        <h4>Manager Details</h4>
+
+        <p><b>Name:</b> <span id="mName"></span></p>
+        <p><b>Email:</b> <span id="mEmail"></span></p>
+        <p><b>Manager Type:</b> <span id="mType"></span></p>
+
+    </div>
+
+
+    <!-- Add / Edit Employee -->
+
+    <div class="card dashboard-card p-4 mb-4">
+
+        <h4>Add / Edit Employee</h4>
+
+        <input id="ename" class="form-control mb-2" placeholder="Employee Name">
+
+        <input id="eemail" class="form-control mb-2" placeholder="Employee Email">
+
+        <input id="epassword" class="form-control mb-2" placeholder="Password">
+
+        <input id="ephone" class="form-control mb-2" placeholder="Phone">
+
+        <select id="etype" class="form-control mb-3">
+
+            <option value="">Select Employee Type</option>
+            <option value="Developer">Developer</option>
+            <option value="QA">QA</option>
+            <option value="DevOps">DevOps</option>
+
+        </select>
+
+        <button onclick="saveEmployee()" class="btn btn-success w-100">
+            Save Employee
+        </button>
+
+    </div>
+
+
+    <!-- Employees Table -->
+
+    <div class="card dashboard-card p-4">
+
+        <h4 class="mb-3">Employees</h4>
+
+        <table class="table table-hover table-bordered">
+
+            <thead class="table-dark">
+
+                <tr>
+
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Password</th>
+                    <th>Phone</th>
+                    <th>Employee Type</th>
+                    <th>Role</th>
+                    <th>Action</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="employeesTable"></tbody>
+
+        </table>
+
+    </div>
+
 
     <script>
 
-function loadData(){
+        /* -----------------------
+        Load Manager Details
+        ----------------------- */
 
-fetch("https://localhost:5001/api/dashboard",{
+        function loadManager() {
 
-headers:{
-"Authorization":"Bearer "+localStorage.getItem("token")
-}
+            const user = JSON.parse(localStorage.getItem("user"));
 
-})
+            if (!user) return;
 
-.then(res=>res.text())
+            document.getElementById("mName").innerText = user.name;
+            document.getElementById("mEmail").innerText = user.email;
+            document.getElementById("mType").innerText = user.managerType;
 
-.then(data=>{
-document.getElementById("result").innerText=data;
-})
+        }
 
-}
+
+        /* -----------------------
+        Employee CRUD
+        ----------------------- */
+
+        let employeeId = null;
+
+
+        /* Add or Update Employee */
+
+        async function saveEmployee() {
+
+            const emp = {
+
+                name: document.getElementById("ename").value,
+                email: document.getElementById("eemail").value,
+                password: document.getElementById("epassword").value,
+                phone: document.getElementById("ephone").value,
+                employeeType: document.getElementById("etype").value,
+                role: "Employee"
+
+            };
+
+            let url = "/api/employees";
+            let method = "POST";
+
+            if (employeeId != null) {
+
+                url = "/api/employees/" + employeeId;
+                method = "PUT";
+
+            }
+
+            await fetch(url, {
+
+                method: method,
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify(emp)
+
+            });
+
+            employeeId = null;
+
+            document.getElementById("ename").value = "";
+            document.getElementById("eemail").value = "";
+            document.getElementById("epassword").value = "";
+            document.getElementById("ephone").value = "";
+            document.getElementById("etype").value = "";
+
+            loadEmployees();
+
+        }
+
+
+        /* -----------------------
+        Load Employees
+        ----------------------- */
+
+        async function loadEmployees() {
+
+            const res = await fetch("/api/employees");
+
+            const data = await res.json();
+
+            let html = "";
+
+            data.forEach(e => {
+
+                html += `
+
+<tr>
+
+<td>${e.name}</td>
+<td>${e.email}</td>
+<td>${e.password}</td>
+<td>${e.phone}</td>
+<td>${e.employeeType}</td>
+<td>${e.role}</td>
+
+<td>
+
+<button onclick="editEmployee(${e.id},'${e.name}','${e.email}','${e.password}','${e.phone}','${e.employeeType}')"
+class="btn btn-warning btn-sm">
+Edit
+</button>
+
+<button onclick="deleteEmployee(${e.id})"
+class="btn btn-danger btn-sm">
+Delete
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+            });
+
+            document.getElementById("employeesTable").innerHTML = html;
+
+        }
+
+
+        /* -----------------------
+        Edit Employee
+        ----------------------- */
+
+        function editEmployee(id, name, email, password, phone, type) {
+
+            document.getElementById("ename").value = name;
+            document.getElementById("eemail").value = email;
+            document.getElementById("epassword").value = password;
+            document.getElementById("ephone").value = phone;
+            document.getElementById("etype").value = type;
+
+            employeeId = id;
+
+        }
+
+
+        /* -----------------------
+        Delete Employee
+        ----------------------- */
+
+        async function deleteEmployee(id) {
+
+            await fetch("/api/employees/" + id, {
+                method: "DELETE"
+            });
+
+            loadEmployees();
+
+        }
+
+
+        /* -----------------------
+        Initialize Dashboard
+        ----------------------- */
+
+        loadManager();
+        loadEmployees();
 
     </script>
 

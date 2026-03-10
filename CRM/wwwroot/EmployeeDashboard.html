@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Employee Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+
+        body {
+            background: #f4f6fb;
+        }
+
+        .profile-card {
+            background: linear-gradient(135deg,#1d3557,#457b9d);
+            color: white;
+            border-radius: 12px;
+        }
+
+        .dashboard-card {
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+
+</head>
+
+<body class="container py-5">
+
+    <h2 class="mb-4">Employee Dashboard</h2>
+
+    <!-- Employee Profile -->
+
+    <div class="card profile-card p-4 mb-4">
+
+        <h4>Your Profile</h4>
+
+        <p><b>Name:</b> <span id="empName"></span></p>
+        <p><b>Email:</b> <span id="empEmail"></span></p>
+        <p><b>Employee Type:</b> <span id="empType"></span></p>
+        <p><b>Role:</b> <span id="empRole"></span></p>
+
+    </div>
+
+
+    <!-- Edit Employee -->
+
+    <div class="card dashboard-card p-4">
+
+        <h4>Edit Your Details</h4>
+
+        <input id="ename" class="form-control mb-2" placeholder="Name">
+
+        <input id="eemail" class="form-control mb-2" placeholder="Email">
+
+        <input id="epassword" class="form-control mb-2" placeholder="Password">
+
+        <input id="ephone" class="form-control mb-2" placeholder="Phone">
+
+        <select id="etype" class="form-control mb-3" placeholder="Select Employee Type">
+
+            <option value="">Select Employee Type</option>
+            <option value="Developer">Developer</option>
+            <option value="QA">QA</option>
+            <option value="DevOps">DevOps</option>
+
+        </select>
+
+        <button onclick="updateEmployee()" class="btn btn-primary w-100">
+            Update Details
+        </button>
+
+    </div>
+
+
+    <script>
+
+        /* Load employee data */
+
+        let employeeId = null;
+
+        function loadEmployee() {
+
+            const user = JSON.parse(localStorage.getItem("user"));
+
+            if (!user) return;
+
+            employeeId = user.id;
+
+            document.getElementById("empName").innerText = user.name;
+            document.getElementById("empEmail").innerText = user.email;
+            document.getElementById("empType").innerText = user.employeeType;
+            document.getElementById("empRole").innerText = user.role;
+
+            document.getElementById("ename").value = user.name;
+            document.getElementById("eemail").value = user.email;
+            document.getElementById("etype").value = user.employeeType;
+
+        }
+
+
+        /* Update employee */
+
+        async function updateEmployee() {
+
+            const emp = {
+
+                name: document.getElementById("ename").value,
+                email: document.getElementById("eemail").value,
+                password: document.getElementById("epassword").value,
+                phone: document.getElementById("ephone").value,
+                employeeType: document.getElementById("etype").value,
+                role: "Employee"
+
+            };
+
+            await fetch("/api/employees/" + employeeId, {
+
+                method: "PUT",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify(emp)
+
+            });
+
+            alert("Details updated successfully");
+
+        }
+
+
+        /* Initialize dashboard */
+
+        loadEmployee();
+
+    </script>
+
+</body>
+
+</html>

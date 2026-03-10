@@ -11,38 +11,57 @@
     <style>
 
         body {
-            background: linear-gradient(135deg,#1d3557,#457b9d);
+            background: linear-gradient(90deg,#23c4a7,#1a78b4);
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            font-family: Arial, Helvetica, sans-serif;
         }
 
-        .card {
-            border-radius: 15px;
+        .home-card {
+            width: 420px;
+            padding: 40px;
+            border-radius: 10px;
+            background: white;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
+
+            .home-card h1 {
+                color: #1a78b4;
+                font-weight: bold;
+            }
+
+            .home-card p {
+                color: #555;
+            }
+
+        .btn-login {
+            background: #2d6cdf;
+            border: none;
+        }
+
+            .btn-login:hover {
+                background: #1e54b8;
+            }
     </style>
 
 </head>
 
 <body>
 
-    <div class="container">
+    <div class="home-card">
 
-        <div class="card shadow-lg p-5 text-center">
+        <h1 class="mb-3">CRM System</h1>
 
-            <h1 class="mb-3">CRM System</h1>
+        <p class="lead">
+            Manage Employees
+        </p>
 
-            <p class="lead">
-                Manage Employees
-            </p>
-
-            <a href="login.html" class="btn btn-primary btn-lg mt-3">
-                Login
-            </a>
-
-        </div>
+        <a href="login.html" class="btn btn-login text-white btn-lg mt-3">
+            Login
+        </a>
 
     </div>
 
