@@ -54,22 +54,27 @@
 
         <input id="eemail" class="form-control mb-2" placeholder="Employee Email">
 
-        <input id="epassword" class="form-control mb-2" placeholder="Password">
+        <input id="epassword" type="password" class="form-control mb-2" placeholder="Password">
 
         <input id="ephone" class="form-control mb-2" placeholder="Phone">
 
+        <select id="category" class="form-control mb-2" onchange="loadTypes()">
+            <option value="">Select Category</option>
+            <option value="IT">IT</option>
+            <option value="NonIT">Non IT</option>
+        </select>
+
         <select id="etype" class="form-control mb-3">
-
             <option value="">Select Employee Type</option>
-            <option value="Developer">Developer</option>
-            <option value="QA">QA</option>
-            <option value="DevOps">DevOps</option>
-
         </select>
 
         <button onclick="saveEmployee()" class="btn btn-success w-100">
             Save Employee
         </button>
+        <button onclick="logout()" class="btn btn-secondary mb-3">
+            Logout
+        </button>
+
 
     </div>
 
@@ -88,7 +93,6 @@
 
                     <th>Name</th>
                     <th>Email</th>
-                    <th>Password</th>
                     <th>Phone</th>
                     <th>Employee Type</th>
                     <th>Role</th>
@@ -106,6 +110,67 @@
 
 
     <script>
+
+        const token = localStorage.getItem("token");
+        const role = localStorage.getItem("role");
+
+        if (!token) {
+            window.location.href = "ManagerLogin.html";
+        }
+
+        if (role !== "Manager") {
+            alert("Unauthorized access");
+            window.location.href = "ManagerLogin.html";
+        }
+
+        function loadTypes() {
+
+            const category = document.getElementById("category").value;
+            const typeDropdown = document.getElementById("etype");
+
+            let options = "";
+
+            if (category === "IT") {
+
+                options = `
+<option value="">Select Employee Type</option>
+<option value="Developer">Developer</option>
+<option value="QA">QA</option>
+<option value="DevOps">DevOps</option>
+`;
+
+            }
+
+            else if (category === "NonIT") {
+
+                options = `
+<option value="">Select Employee Type</option>
+<option value="HR Services">HR Services</option>
+<option value="Finance">Finance</option>
+<option value="Sales">Sales</option>
+`;
+
+            }
+
+            typeDropdown.innerHTML = options;
+
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = "ManagerLogin.html";
+        }
+
+        
+
+        if (!token) {
+            window.location.href = "ManagerLogin.html";
+        }
+
+        if (role !== "Manager") {
+            alert("Unauthorized access");
+            window.location.href = "ManagerLogin.html";
+        }
 
         /* -----------------------
         Load Manager Details
@@ -161,7 +226,9 @@
                 method: method,
 
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                         "Authorization": "Bearer " + token
+
                 },
 
                 body: JSON.stringify(emp)
@@ -176,6 +243,11 @@
             document.getElementById("ephone").value = "";
             document.getElementById("etype").value = "";
 
+            if (!emp.name || !emp.email || !emp.password || !emp.phone || !emp.employeeType) {
+                alert("Please fill all fields");
+                return;
+            }
+
             loadEmployees();
 
         }
@@ -187,7 +259,11 @@
 
         async function loadEmployees() {
 
-            const res = await fetch("/api/employees");
+            const res = await fetch("/api/employees", {
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            });
 
             const data = await res.json();
 
@@ -201,7 +277,6 @@
 
 <td>${e.name}</td>
 <td>${e.email}</td>
-<td>${e.password}</td>
 <td>${e.phone}</td>
 <td>${e.employeeType}</td>
 <td>${e.role}</td>
@@ -255,7 +330,10 @@ Delete
         async function deleteEmployee(id) {
 
             await fetch("/api/employees/" + id, {
-                method: "DELETE"
+                method: "DELETE",
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
             });
 
             loadEmployees();

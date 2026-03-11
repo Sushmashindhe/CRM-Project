@@ -55,17 +55,20 @@
 
         <input id="eemail" class="form-control mb-2" placeholder="Email">
 
-        <input id="epassword" class="form-control mb-2" placeholder="Password">
+        <input id="epassword" type="password" class="form-control mb-2" placeholder="Password">
 
         <input id="ephone" class="form-control mb-2" placeholder="Phone">
 
-        <select id="etype" class="form-control mb-3" placeholder="Select Employee Type">
+        <select id="category" class="form-control mb-2" onchange="loadTypes()">
+            <option value="">Select Category</option>
+            <option value="IT">IT</option>
+            <option value="NonIT">Non IT</option>
+        </select>
 
+        <!-- Employee Type -->
+
+        <select id="etype" class="form-control mb-3">
             <option value="">Select Employee Type</option>
-            <option value="Developer">Developer</option>
-            <option value="QA">QA</option>
-            <option value="DevOps">DevOps</option>
-
         </select>
 
         <button onclick="updateEmployee()" class="btn btn-primary w-100">
@@ -76,6 +79,51 @@
 
 
     <script>
+
+        function loadTypes() {
+
+            const category = document.getElementById("category").value;
+            const typeDropdown = document.getElementById("etype");
+
+            let options = "";
+
+            if (category === "IT") {
+
+                options = `
+        <option value="">Select Employee Type</option>
+        <option value="Developer">Developer</option>
+        <option value="QA">QA</option>
+        <option value="DevOps">DevOps</option>
+        `;
+
+            }
+
+            else if (category === "NonIT") {
+
+                options = `
+        <option value="">Select Employee Type</option>
+        <option value="HR Services">HR Services</option>
+        <option value="Finance">Finance</option>
+        <option value="Sales">Sales</option>
+        `;
+
+            }
+
+            typeDropdown.innerHTML = options;
+
+        }
+
+        const token = localStorage.getItem("token");
+        const role = localStorage.getItem("role");
+
+        if (!token) {
+            window.location.href = "EmployeeLogin.html";
+        }
+
+        if (role !== "Employee") {
+            alert("Unauthorized access");
+            window.location.href = "EmployeeLogin.html";
+        }
 
         /* Load employee data */
 
@@ -116,20 +164,27 @@
 
             };
 
-            await fetch("/api/employees/" + employeeId, {
+            const res = await fetch("/api/employees/" + employeeId, {
 
                 method: "PUT",
 
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
                 },
 
                 body: JSON.stringify(emp)
 
             });
 
+            const updated = await res.json();
+
+            // update localStorage
+            localStorage.setItem("user", JSON.stringify(updated));
+
             alert("Details updated successfully");
 
+            loadEmployee();
         }
 
 

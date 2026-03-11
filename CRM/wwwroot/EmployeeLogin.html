@@ -1,6 +1,59 @@
-﻿namespace CRM.wwwroot
-{
-    public class EmployeeLogin
-    {
-    }
-}
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Employee Login</title>
+</head>
+
+<body>
+
+    <h2>Employee Login</h2>
+
+    <input id="email" placeholder="Email"><br><br>
+    <input id="password" type="password" placeholder="Password"><br><br>
+
+    <button onclick="login()">Login</button>
+
+    <script>
+
+        const API = "https://localhost:7192";
+
+        async function login() {
+
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value.trim();
+
+            const res = await fetch(API + "/api/emp/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            });
+
+            const data = await res.json();
+
+            console.log(data);
+
+            if (res.ok) {
+
+                // store token
+                localStorage.setItem("token", data.token);
+                localStorage.setItem("role", data.role);
+                localStorage.setItem("user", JSON.stringify(data.user));
+
+                // redirect
+                window.location.href = "EmployeeDashboard.html";
+
+            } else {
+                alert(data);
+            }
+        }
+
+    </script>
+
+</body>
+</html>
