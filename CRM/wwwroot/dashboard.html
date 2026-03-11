@@ -87,8 +87,10 @@
 
                 if (!res.ok) {
                     const text = await res.text();
-                    console.log(text);
-                    throw new Error("API error");
+                    console.log("Status:", res.status);
+                    console.log("Error:", text);
+                    alert("Failed to load managers");
+                    return;
                 }
 
                 const data = await res.json();

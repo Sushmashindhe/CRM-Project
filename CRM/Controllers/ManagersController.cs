@@ -18,7 +18,8 @@ namespace CRM.Controllers
         }
 
         [HttpPost]
-       [AllowAnonymous]
+        //[AllowAnonymous]
+        [Authorize(Roles ="SeniorManager")]
         public IActionResult AddManager([FromBody] Managers manager)
         {
             manager.Role = "Manager";
@@ -30,7 +31,9 @@ namespace CRM.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
+        //[AllowAnonymous]
+        [Authorize(Roles = "SeniorManager")]
+
         public IActionResult GetManagers()
         {
             var managers = _context.Managers.Select(m => new

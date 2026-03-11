@@ -119,6 +119,9 @@
     </div>
 
     <script>
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        localStorage.removeItem("user");
 
         function managerLogin() {
             window.location.href = "ManagerLogin.html";
@@ -156,7 +159,10 @@
                     }
 
                     const user = await res.json();
-
+                    console.log(user); 
+                    // store token and role separately
+                    localStorage.setItem("token", user.token);
+                    localStorage.setItem("role", user.role);
                     localStorage.setItem("user", JSON.stringify(user));
 
                     window.location.href = "dashboard.html";
