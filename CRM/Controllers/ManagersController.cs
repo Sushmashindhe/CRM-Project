@@ -47,6 +47,24 @@ namespace CRM.Controllers
             return Ok(managers);
         }
 
+        [HttpPut("{id}")]
+        [Authorize(Roles = "SeniorManager")]
+        public IActionResult UpdateManager(int id, [FromBody] Managers updatedManager)
+        {
+            var manager = _context.Managers.Find(id);
+
+            if (manager == null)
+                return NotFound();
+
+            manager.Name = updatedManager.Name;
+            manager.Email = updatedManager.Email;
+            manager.ManagerType = updatedManager.ManagerType;
+
+            _context.SaveChanges();
+
+            return Ok(new { message = "Manager updated successfully" });
+        }
+
         [HttpDelete("{id}")]
         public IActionResult DeleteManager(int id)
         {

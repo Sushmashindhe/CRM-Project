@@ -110,6 +110,14 @@
 Delete
 </button>
 </td>
+<td>
+<button class="btn btn-warning btn-sm"
+onclick="editManager(${m.id},'${m.name}','${m.email}','${m.managerType}')">
+ 
+<i class="bi bi-pencil"></i> Edit
+ 
+</button>
+</td>
 </tr>
 `;
 
@@ -191,6 +199,31 @@ Delete
                 alert("Error connecting to API");
 
             }
+
+        }
+
+        function editManager(id, name, email, type) {
+
+            editManagerId = id;
+
+            document.getElementById("mname").value = name;
+            document.getElementById("memail").value = email;
+            document.getElementById("mtype").value = type;
+
+            document.getElementById("saveBtn").innerText = "Update Manager";
+
+        }
+
+        function clearForm() {
+
+            editManagerId = null;
+
+            document.getElementById("mname").value = "";
+            document.getElementById("memail").value = "";
+            document.getElementById("mpassword").value = "";
+            document.getElementById("mtype").value = "";
+
+            document.getElementById("saveBtn").innerText = "Add Manager";
 
         }
 
