@@ -14,14 +14,12 @@
 
     <!-- ADD MANAGER -->
 
-    <div id="createSection">
+    <div>
 
         <h4>Add Manager</h4>
 
         <input id="mname" class="form-control mb-2" placeholder="Name">
-
         <input id="memail" class="form-control mb-2" placeholder="Email">
-
         <input id="mpassword" type="password" class="form-control mb-2" placeholder="Password">
 
         <select id="mtype" class="form-control mb-2">
@@ -37,8 +35,6 @@
     </div>
 
     <hr>
-
-    <!-- MANAGER TABLE -->
 
     <h3>Managers</h3>
 
@@ -63,15 +59,23 @@
         const API = "https://localhost:7192";
 
         const token = localStorage.getItem("token");
-        const user = JSON.parse(localStorage.getItem("user"));
+        const role = localStorage.getItem("role");
 
-        /* CHECK LOGIN */
+        /* =========================
+        AUTH CHECK
+        ========================= */
 
-        if (!token) {
-            window.location.href = "ManagerLogin.html";
+        if (!token || role !== "SeniorManager") {
+
+            alert("Unauthorized access");
+            window.location.replace("login.html");
+            throw new Error("Unauthorized");
+
         }
 
-        /* LOAD MANAGERS */
+        /* =========================
+        LOAD MANAGERS
+        ========================= */
 
         async function loadManagers() {
 
@@ -83,13 +87,9 @@
                     }
                 });
 
-                console.log("Status:", res.status);
-
-                if (!res.ok) {
-                    const text = await res.text();
-                    console.log("Status:", res.status);
-                    console.log("Error:", text);
-                    alert("Failed to load managers");
+                if (res.status === 401) {
+                    alert("Session expired. Please login again.");
+                    logout();
                     return;
                 }
 
@@ -118,17 +118,18 @@ Delete
                 document.getElementById("managersTable").innerHTML = html;
 
             }
+            catch (error) {
 
-            catch (err) {
-
-                console.log(err);
+                console.log(error);
                 alert("Failed to load managers");
 
             }
 
         }
 
-        /* ADD MANAGER */
+        /* =========================
+        ADD MANAGER
+        ========================= */
 
         async function addManager() {
 
@@ -138,10 +139,8 @@ Delete
             const managerType = document.getElementById("mtype").value;
 
             if (!name || !email || !password || !managerType) {
-
                 alert("Please fill all fields");
                 return;
-
             }
 
             const manager = {
@@ -155,7 +154,7 @@ Delete
 
             try {
 
-                const response = await fetch(API + "/api/managers", {
+                const res = await fetch(API + "/api/managers", {
 
                     method: "POST",
 
@@ -168,10 +167,10 @@ Delete
 
                 });
 
-                if (!response.ok) {
+                if (!res.ok) {
 
-                    const text = await response.text();
-                    alert("Manager not added\n" + text);
+                    const text = await res.text();
+                    alert(text);
                     return;
 
                 }
@@ -186,7 +185,6 @@ Delete
                 loadManagers();
 
             }
-
             catch (error) {
 
                 console.log(error);
@@ -196,7 +194,9 @@ Delete
 
         }
 
-        /* DELETE MANAGER */
+        /* =========================
+        DELETE MANAGER
+        ========================= */
 
         async function deleteManager(id) {
 
@@ -204,7 +204,7 @@ Delete
 
             try {
 
-                await fetch(API + "/api/managers/" + id, {
+                const res = await fetch(API + "/api/managers/" + id, {
 
                     method: "DELETE",
 
@@ -214,31 +214,37 @@ Delete
 
                 });
 
+                if (!res.ok) {
+                    alert("Delete failed");
+                    return;
+                }
+
                 loadManagers();
 
             }
+            catch (error) {
 
-            catch (err) {
-
-                console.log(err);
+                console.log(error);
                 alert("Delete failed");
 
             }
 
         }
 
-        /* LOGOUT */
+        /* =========================
+        LOGOUT
+        ========================= */
 
         function logout() {
 
-            localStorage.removeItem("token");
-            localStorage.removeItem("user");
-
-            window.location.href = "ManagerLogin.html";
+            localStorage.clear();
+            window.location.href = "login.html";
 
         }
 
-        /* INITIAL LOAD */
+        /* =========================
+        INITIAL LOAD
+        ========================= */
 
         loadManagers();
 

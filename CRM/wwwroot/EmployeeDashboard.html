@@ -75,6 +75,14 @@
             Update Details
         </button>
 
+        <div class="d-flex justify-content-between mb-4">
+            <h2>Employee Dashboard</h2>
+
+            <button onclick="logout()" class="btn btn-danger">
+                Logout
+            </button>
+        </div>
+
     </div>
 
 
@@ -191,6 +199,21 @@
         /* Initialize dashboard */
 
         loadEmployee();
+
+        function logout() {
+
+            // remove token
+            localStorage.removeItem("token");
+
+            // remove role
+            localStorage.removeItem("role");
+
+            // remove user details
+            localStorage.removeItem("user");
+
+            // redirect to login page
+            window.location.href = "EmployeeLogin.html";
+        }
 
     </script>
 
