@@ -28,7 +28,7 @@
             <option value="Non IT Manager">Non IT Manager</option>
         </select>
 
-        <button onclick="addManager()" class="btn btn-primary">
+        <button id="saveBtn" onclick="saveManager()" class="btn btn-primary">
             Add Manager
         </button>
 
@@ -55,6 +55,8 @@
     </table>
 
     <script>
+
+        let editManagerId = null;
 
         const API = "https://localhost:7192";
 
@@ -109,8 +111,6 @@
 <button onclick="deleteManager(${m.id})" class="btn btn-danger btn-sm">
 Delete
 </button>
-</td>
-<td>
 <button class="btn btn-warning btn-sm"
 onclick="editManager(${m.id},'${m.name}','${m.email}','${m.managerType}')">
  
@@ -139,32 +139,39 @@ onclick="editManager(${m.id},'${m.name}','${m.email}','${m.managerType}')">
         ADD MANAGER
         ========================= */
 
-        async function addManager() {
+        async function saveManager() {
 
             const name = document.getElementById("mname").value;
             const email = document.getElementById("memail").value;
             const password = document.getElementById("mpassword").value;
             const managerType = document.getElementById("mtype").value;
 
-            if (!name || !email || !password || !managerType) {
-                alert("Please fill all fields");
+            if (!name || !email || !managerType) {
+                alert("Please fill required fields");
                 return;
             }
 
             const manager = {
-
                 name: name,
                 email: email,
                 password: password,
                 managerType: managerType
-
             };
 
             try {
 
-                const res = await fetch(API + "/api/managers", {
+                let url = API + "/api/managers";
+                let method = "POST";
 
-                    method: "POST",
+                // UPDATE
+                if (editManagerId !== null) {
+                    url = API + "/api/managers/" + editManagerId;
+                    method = "PUT";
+                }
+
+                const res = await fetch(url, {
+
+                    method: method,
 
                     headers: {
                         "Content-Type": "application/json",
@@ -176,20 +183,14 @@ onclick="editManager(${m.id},'${m.name}','${m.email}','${m.managerType}')">
                 });
 
                 if (!res.ok) {
-
                     const text = await res.text();
                     alert(text);
                     return;
-
                 }
 
-                alert("Manager added successfully");
+                alert(editManagerId ? "Manager updated successfully" : "Manager added successfully");
 
-                document.getElementById("mname").value = "";
-                document.getElementById("memail").value = "";
-                document.getElementById("mpassword").value = "";
-                document.getElementById("mtype").value = "";
-
+                clearForm();
                 loadManagers();
 
             }
@@ -199,7 +200,6 @@ onclick="editManager(${m.id},'${m.name}','${m.email}','${m.managerType}')">
                 alert("Error connecting to API");
 
             }
-
         }
 
         function editManager(id, name, email, type) {
