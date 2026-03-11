@@ -1,78 +1,58 @@
 ﻿using CRM.Data;
 using CRM.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using BCrypt.Net;
 
-[ApiController]
-[Route("api/[controller]")]
-public class ManagersController : ControllerBase
+namespace CRM.Controllers
 {
-
-    private readonly AppDbContext _context;
-
-    public ManagersController(AppDbContext context)
+    [ApiController]
+    [Route("api/[controller]")]
+    [Authorize]
+    public class ManagersController : ControllerBase
     {
-        _context = context;
+        private readonly AppDbContext _context;
+        public ManagersController(AppDbContext context)
+        {
+            _context = context;
+        }
+
+        [HttpPost]
+       [AllowAnonymous]
+        public IActionResult AddManager([FromBody] Managers manager)
+        {
+            manager.Role = "Manager";
+            // HASH PASSWORD
+            manager.Password = BCrypt.Net.BCrypt.HashPassword(manager.Password);
+            _context.Managers.Add(manager);
+            _context.SaveChanges();
+            return Ok(new { message = "Manager created" });
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult GetManagers()
+        {
+            var managers = _context.Managers.Select(m => new
+            {
+                m.Id,
+                m.Name,
+                m.Email,
+                m.Role,
+                m.ManagerType
+            }).ToList();
+            return Ok(managers);
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteManager(int id)
+        {
+            var manager = _context.Managers.Find(id);
+            if (manager == null)
+                return NotFound();
+            _context.Managers.Remove(manager);
+            _context.SaveChanges();
+            return Ok("Deleted");
+        }
     }
-
-    // GET all managers
-    [HttpGet]
-    public IActionResult GetManagers()
-    {
-        return Ok(_context.Managers.ToList());
-    }
-
-    // ADD manager
-    [HttpPost]
-    public IActionResult AddManager(Managers manager)
-    {
-
-        manager.Role = "Manager";
-
-        _context.Managers.Add(manager);
-
-        _context.SaveChanges();
-
-        return Ok(manager);
-
-    }
-
-    // UPDATE manager
-    [HttpPut("{id}")]
-    public IActionResult UpdateManager(int id, Managers manager)
-    {
-
-        var existing = _context.Managers.Find(id);
-
-        if (existing == null)
-            return NotFound();
-
-        existing.Name = manager.Name;
-        existing.Email = manager.Email;
-        existing.Password = manager.Password;
-        existing.ManagerType = manager.ManagerType;
-
-        _context.SaveChanges();
-
-        return Ok(existing);
-
-    }
-
-    // DELETE manager
-    [HttpDelete("{id}")]
-    public IActionResult DeleteManager(int id)
-    {
-
-        var manager = _context.Managers.Find(id);
-
-        if (manager == null)
-            return NotFound();
-
-        _context.Managers.Remove(manager);
-
-        _context.SaveChanges();
-
-        return Ok();
-
-    }
-
 }

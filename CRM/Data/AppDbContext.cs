@@ -13,9 +13,6 @@ namespace CRM.Data
 
         public DbSet<Employees> Employees { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-        }
+       
     }
 }

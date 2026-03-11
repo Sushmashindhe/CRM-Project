@@ -9,53 +9,50 @@
 
     <h2>Manager Login</h2>
 
-    <input type="text" id="email" placeholder="Email"><br><br>
-
-    <input type="password" id="password" placeholder="Password"><br><br>
+    <input id="email" placeholder="Email"><br><br>
+    <input id="password" type="password" placeholder="Password"><br><br>
 
     <button onclick="login()">Login</button>
 
     <script>
 
-function login(){
+        const API = "https://localhost:7192";
 
-fetch("https://localhost:5001/api/auth/login",{
+        async function login() {
 
-method:"POST",
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value.trim();
 
-headers:{
-"Content-Type":"application/json"
-},
+            const res = await fetch(API + "/api/auth/login", {
 
-body:JSON.stringify({
+                method: "POST",
 
-email:document.getElementById("email").value,
-password:document.getElementById("password").value
+                headers: {
+                    "Content-Type": "application/json"
+                },
 
-})
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
 
-})
+            });
 
-.then(response=>response.json())
+            if (!res.ok) {
+                const text = await res.text();
+                alert(text);
+                return;
+            }
 
-.then(data=>{
+            const data = await res.json();
 
-localStorage.setItem("token",data.token);
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("role", data.role);
 
-window.location.href="managerdashboard.html";
-
-})
-
-.catch(error=>{
-
-alert("Login Failed");
-
-});
-
-}
+            window.location.href = "ManagerDashboard.html";
+        }
 
     </script>
 
 </body>
-
 </html>
