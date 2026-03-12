@@ -18,7 +18,6 @@ namespace CRM.Controllers
         }
 
         [HttpPost]
-        //[AllowAnonymous]
         [Authorize(Roles ="SeniorManager")]
         public IActionResult AddManager([FromBody] Managers manager)
         {
@@ -31,7 +30,6 @@ namespace CRM.Controllers
         }
 
         [HttpGet]
-        //[AllowAnonymous]
         [Authorize(Roles = "SeniorManager")]
 
         public IActionResult GetManagers()
@@ -66,6 +64,7 @@ namespace CRM.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "SeniorManager")]
         public IActionResult DeleteManager(int id)
         {
             var manager = _context.Managers.Find(id);
