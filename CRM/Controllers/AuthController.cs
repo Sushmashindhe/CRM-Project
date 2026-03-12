@@ -28,7 +28,7 @@ namespace CRM.Controllers
             // Senior Manager login
             if (login.Email.Trim().ToLower() == "senior@test.com" && login.Password == "Senior@1234")
             {
-                var token = GenerateToken(login.Email, "SeniorManager");
+                var token = GenerateToken(login.Email, "SeniorManager", 0);
 
                 return Ok(new
                 {
@@ -42,31 +42,52 @@ namespace CRM.Controllers
             var manager = _context.Managers
                 .FirstOrDefault(x => x.Email.ToLower() == login.Email.ToLower());
 
-            if (manager == null)
-                return Unauthorized("Email not found");
-
-            bool validPassword = BCrypt.Net.BCrypt.Verify(login.Password, manager.Password);
-
-            if (!validPassword)
-                return Unauthorized("Invalid password");
-
-            var managerToken = GenerateToken(manager.Email, manager.Role);
-
-            return Ok(new
+            if (manager != null)
             {
-                token = managerToken,
-                role = manager.Role,
-                email = manager.Email
-            });
+                bool validPassword = BCrypt.Net.BCrypt.Verify(login.Password, manager.Password);
+
+                if (!validPassword)
+                    return Unauthorized("Invalid password");
+
+                var managerToken = GenerateToken(manager.Email, manager.Role, manager.Id);
+
+                return Ok(new
+                {
+                    token = managerToken,
+                    role = manager.Role,
+                    email = manager.Email
+                });
+            }
+
+            // Customer login
+            var customer = _context.Customers
+                .FirstOrDefault(x => x.Email.ToLower() == login.Email.ToLower());
+
+            if (customer != null)
+            {
+                bool validPassword = BCrypt.Net.BCrypt.Verify(login.Password, customer.Password);
+
+                if (!validPassword)
+                    return Unauthorized("Invalid password");
+
+                return Ok(new
+                {
+                    role = "Customer",
+                    user = customer
+                });
+            }
+
+            return Unauthorized("User not found");
         }
 
-        private string GenerateToken(string email, string role)
+        private string GenerateToken(string email, string role, int id)
         {
             var claims = new[]
             {
-                new Claim(ClaimTypes.Email, email),
-                new Claim(ClaimTypes.Role, role)
-            };
+        new Claim(ClaimTypes.Email, email),
+        new Claim(ClaimTypes.Role, role),
+        new Claim("Id", id.ToString())   // IMPORTANT
+    };
 
             var key = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!)

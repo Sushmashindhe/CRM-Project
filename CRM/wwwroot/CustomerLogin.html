@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Customer Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="container mt-5">
+
+    <h2>Customer Login</h2>
+
+    <input id="email" class="form-control mb-3" placeholder="Email">
+
+    <input id="password" type="password" class="form-control mb-3" placeholder="Password">
+
+    <button onclick="login()" class="btn btn-primary w-100">
+        Login
+    </button>
+
+    <p class="mt-3">
+        New Customer?
+        <a href="CustomerRegister.html">Register here</a>
+    </p>
+
+    <script>
+
+        const API = "https://localhost:7192";
+
+        async function login() {
+
+            const data = {
+                email: document.getElementById("email").value,
+                password: document.getElementById("password").value
+            };
+
+            const res = await fetch(API + "/api/customers/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!res.ok) {
+                alert("Invalid login");
+                return;
+            }
+
+            const result = await res.json();
+
+            /* store logged in customer */
+
+            localStorage.setItem("user", JSON.stringify(result.user));
+
+            window.location.href = "CustomerDashboard.html";
+
+        }
+
+    </script>
+
+</body>
+</html>

@@ -171,6 +171,26 @@
 
     </div>
 
+    <h4>Customer Requirements</h4>
+
+    <table class="table table-bordered">
+
+        <thead class="table-dark">
+
+            <tr>
+                <th>CustomerId</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Status</th>
+            </tr>
+
+        </thead>
+
+        <tbody id="requirementsTable"></tbody>
+
+    </table>
+
 
 
     <!-- ADD MANAGER -->
@@ -354,7 +374,38 @@
 
         }
 
+        async function loadRequirements() {
 
+            const res = await fetch(API + "/api/customerrequirements", {
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+
+            });
+
+            const data = await res.json();
+
+            let html = "";
+
+            data.forEach(r => {
+
+                html += `
+<tr>
+<td>${r.customerId}</td>
+<td>${r.title}</td>
+<td>${r.description}</td>
+<td>${r.category}</td>
+<td>${r.status}</td>
+</tr>
+`;
+
+            });
+
+            document.getElementById("requirementsTable").innerHTML = html;
+
+        }
+
+        loadRequirements();
 
         /* TOAST */
 

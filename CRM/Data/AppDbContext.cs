@@ -13,6 +13,9 @@ namespace CRM.Data
 
         public DbSet<Employees> Employees { get; set; }
 
-       
+        public DbSet<CustomerRequirement> CustomerRequirements { get; set; }
+
+        public DbSet<Customers> Customers { get; set; }
+
     }
 }
