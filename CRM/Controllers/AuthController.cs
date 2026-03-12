@@ -26,7 +26,7 @@ namespace CRM.Controllers
         public IActionResult Login([FromBody] LoginDTO login)
         {
             // Senior Manager login
-            if (login.Email.Trim().ToLower() == "senior@test.com" && login.Password == "1234")
+            if (login.Email.Trim().ToLower() == "senior@test.com" && login.Password == "Senior@1234")
             {
                 var token = GenerateToken(login.Email, "SeniorManager");
 

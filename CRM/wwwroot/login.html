@@ -63,6 +63,13 @@
             gap: 10px;
             margin-top: 15px;
         }
+
+        .error-text {
+            color: red;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
     </style>
 
 </head>
@@ -77,32 +84,58 @@
 
         <div class="login-title">Sign In</div>
 
+
+        <!-- EMAIL -->
+
         <div class="mb-3">
-            <label class="form-label">Username</label>
+
+            <label class="form-label">Email</label>
+
             <input id="email" class="form-control">
+
+            <div id="emailError" class="error-text">
+                Please enter a valid email (must contain @)
+            </div>
+
         </div>
+
+
+        <!-- PASSWORD -->
 
         <div class="mb-3">
+
             <label class="form-label">Password</label>
+
             <input id="password" type="password" class="form-control">
+
+            <div id="passwordError" class="error-text">
+                Password must contain 8+ characters, uppercase, lowercase, number and special character
+            </div>
+
         </div>
 
-        <div class="form-check mb-3">
-            <input class="form-check-input" type="checkbox">
-            <label class="form-check-label">
-                Remember me
-            </label>
+        <!-- LOGIN ERROR MESSAGE -->
+
+        <div id="loginError" class="alert alert-danger" style="display:none;">
+            Invalid email or password
         </div>
+
+
+        <!-- LOGIN BUTTON -->
 
         <div class="d-grid">
-            <!-- Sign In button unchanged -->
+
             <button onclick="login()" class="btn btn-login text-white">
                 Sign In
             </button>
+
         </div>
 
-        <!-- Manager & Employee buttons -->
+
+        <!-- ROLE BUTTONS -->
+
         <div class="role-buttons">
+
             <button onclick="managerLogin()" class="btn btn-outline-primary w-50">
                 Manager Login
             </button>
@@ -110,7 +143,9 @@
             <button onclick="employeeLogin()" class="btn btn-outline-primary w-50">
                 Employee Login
             </button>
+
         </div>
+
 
         <div class="help-link">
             <a href="#">Forgot Password</a>
@@ -118,27 +153,60 @@
 
     </div>
 
+
     <script>
+
         localStorage.removeItem("token");
         localStorage.removeItem("role");
         localStorage.removeItem("user");
+
 
         function managerLogin() {
             window.location.href = "ManagerLogin.html";
         }
 
+
         function employeeLogin() {
             window.location.href = "EmployeeLogin.html";
         }
 
+
         function login() {
 
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
+
+            const emailError = document.getElementById("emailError");
+            const loginError = document.getElementById("loginError");
+
+            emailError.style.display = "none";
+            loginError.style.display = "none";
+
+
+            /* EMAIL VALIDATION */
+
+            if (!email.includes("@")) {
+
+                emailError.style.display = "block";
+                return;
+
+            }
+
+            const strongPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+
+            if (!strongPassword.test(password)) {
+                passwordError.style.display = "block";
+                return;
+            }
+
+
             const data = {
-
-                email: document.getElementById("email").value,
-                password: document.getElementById("password").value
-
+                email: email,
+                password: password
             };
+
+
+            /* API LOGIN */
 
             fetch("/api/auth/login", {
 
@@ -154,13 +222,14 @@
                 .then(async res => {
 
                     if (!res.ok) {
-                        alert("Invalid login");
+
+                        loginError.style.display = "block";
                         return;
+
                     }
 
                     const user = await res.json();
-                    console.log(user); 
-                    // store token and role separately
+
                     localStorage.setItem("token", user.token);
                     localStorage.setItem("role", user.role);
                     localStorage.setItem("user", JSON.stringify(user));
