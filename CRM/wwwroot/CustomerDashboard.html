@@ -14,47 +14,32 @@
     </div>
 
     <!-- Customer Profile -->
-
     <div class="card p-4 mb-4">
-
         <h4>Your Details</h4>
-
         <p><b>Name:</b> <span id="cname"></span></p>
         <p><b>Email:</b> <span id="cemail"></span></p>
         <p><b>Phone:</b> <span id="cphone"></span></p>
-
     </div>
 
     <!-- Send Requirement -->
-
     <div class="card p-4 mb-4">
-
         <h4>Send Requirement</h4>
-
         <input id="title" class="form-control mb-2" placeholder="Requirement Title">
-
-<textarea id="desc" class="form-control mb-2" placeholder="Description"></textarea>
-
+        <textarea id="desc" class="form-control mb-2" placeholder="Description"></textarea>
         <select id="category" class="form-control mb-3">
             <option value="">Select Category</option>
             <option value="IT">IT</option>
             <option value="NonIT">Non IT</option>
         </select>
-
         <button onclick="sendRequirement()" class="btn btn-primary">
             Submit Requirement
         </button>
-
     </div>
 
     <!-- Requirement List -->
-
     <div class="card p-4">
-
         <h4>Your Requirements</h4>
-
         <table class="table table-bordered">
-
             <thead class="table-dark">
                 <tr>
                     <th>Title</th>
@@ -63,111 +48,99 @@
                     <th>Status</th>
                 </tr>
             </thead>
-
             <tbody id="reqTable"></tbody>
-
         </table>
-
     </div>
 
     <script>
-
         const API = "https://localhost:7192";
 
-        /* Check if customer logged in */
-
+        // Get logged-in user
         const user = JSON.parse(localStorage.getItem("user"));
 
         if (!user) {
             window.location.href = "CustomerLogin.html";
         }
 
-        /* Display customer details */
-
+        // Display user details
         document.getElementById("cname").innerText = user.name;
         document.getElementById("cemail").innerText = user.email;
         document.getElementById("cphone").innerText = user.phone;
 
-
-        /* Send Requirement */
-
+        // Send requirement
         async function sendRequirement() {
-
             const req = {
                 title: document.getElementById("title").value,
                 description: document.getElementById("desc").value,
                 category: document.getElementById("category").value,
-                customerId: user.id
+                customerId: user.id,
+                status: "Pending" // <-- Add this
             };
 
-            const res = await fetch(API + "/api/customerrequirements", {
-
-                method: "POST",
-
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
-                body: JSON.stringify(req)
-
-            });
-
-            if (res.ok) {
-
-                alert("Requirement sent successfully");
-                loadRequirements();
-
-            } else {
-
-                alert("Failed to send requirement");
-
+            // Validation
+            if (!req.title || !req.description || !req.category) {
+                alert("Please fill all fields.");
+                return;
             }
 
+            try {
+                const res = await fetch(API + "/api/customerrequirements", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(req)
+                });
+
+                if (res.ok) {
+                    alert("Requirement sent successfully!");
+                    // Clear inputs
+                    document.getElementById("title").value = "";
+                    document.getElementById("desc").value = "";
+                    document.getElementById("category").value = "";
+                    loadRequirements();
+                } else {
+                    const err = await res.text();
+                    alert("Failed to send requirement: " + err);
+                }
+            } catch (error) {
+                alert("Error connecting to server: " + error.message);
+            }
         }
 
-
-        /* Load Requirements */
-
+        // Load customer's requirements
         async function loadRequirements() {
-
-            const res = await fetch(API + "/api/customerrequirements/my/" + user.id);
-
-            const data = await res.json();
-
-            let html = "";
-
-            data.forEach(r => {
-
-                html += `
+            try {
+                const res = await fetch(API + "/api/customerrequirements/my/" + user.id);
+                if (!res.ok) {
+                    alert("Failed to load requirements");
+                    return;
+                }
+                const data = await res.json();
+                let html = "";
+                data.forEach(r => {
+                    html += `
 <tr>
 <td>${r.title}</td>
 <td>${r.description}</td>
 <td>${r.category}</td>
 <td>${r.status}</td>
-</tr>
-`;
-
-            });
-
-            document.getElementById("reqTable").innerHTML = html;
-
+</tr>`;
+                });
+                document.getElementById("reqTable").innerHTML = html;
+            } catch (error) {
+                alert("Error loading requirements: " + error.message);
+            }
         }
 
-
-        /* Logout */
-
+        // Logout
         function logout() {
-
             localStorage.removeItem("user");
-
             window.location.href = "CustomerLogin.html";
-
         }
 
-        /* Load requirements when page opens */
-
+        // Load requirements on page load
         loadRequirements();
-
     </script>
 
 </body>

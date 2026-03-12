@@ -18,15 +18,10 @@ public class CustomerRequirementsController : ControllerBase
     [HttpPost]
     public IActionResult SendRequirement([FromBody] CustomerRequirement req)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
         if (req == null)
             return BadRequest("Requirement data missing");
 
-        req.Status = "Pending";
+        req.Status = "Pending"; // Set default status here
 
         _context.CustomerRequirements.Add(req);
         _context.SaveChanges();
