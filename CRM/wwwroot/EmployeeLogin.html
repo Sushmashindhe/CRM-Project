@@ -3,16 +3,99 @@
 
 <head>
     <title>Employee Login</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(135deg,#2cc1a6,#1e6fa8);
+        }
+
+        /* Login Card */
+
+        .login-box {
+            background: white;
+            padding: 35px 30px;
+            width: 360px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        /* Title */
+
+        h2 {
+            margin-bottom: 25px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        /* Inputs */
+
+        input {
+            width: 100%;
+            padding: 11px;
+            margin-bottom: 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+
+        /* Button */
+
+        button {
+            width: 100%;
+            padding: 11px;
+            background: #2f63d8;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background: #244fb0;
+            }
+
+        /* Forgot Password */
+
+        a {
+            display: block;
+            margin-top: 12px;
+            color: #2f63d8;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+            a:hover {
+                text-decoration: underline;
+            }
+    </style>
+
 </head>
 
 <body>
 
-    <h2>Employee Login</h2>
+    <div class="login-box">
 
-    <input id="email" placeholder="Email"><br><br>
-    <input id="password" type="password" placeholder="Password"><br><br>
+        <h2>Employee Login</h2>
 
-    <button onclick="login()">Login</button>
+        <input id="email" placeholder="Email">
+
+        <input id="password" type="password" placeholder="Password">
+
+        <button onclick="login()">Login</button>
+
+        <a href="EmployeeResetPassword.html">Forgot Password?</a>
+
+    </div>
 
     <script>
 
@@ -36,21 +119,18 @@
 
             const data = await res.json();
 
-            console.log(data);
-
             if (res.ok) {
 
-                // store token
                 localStorage.setItem("token", data.token);
                 localStorage.setItem("role", data.role);
                 localStorage.setItem("user", JSON.stringify(data.user));
 
-                // redirect
                 window.location.href = "EmployeeDashboard.html";
 
             } else {
                 alert(data);
             }
+
         }
 
     </script>
