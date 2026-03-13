@@ -61,6 +61,45 @@ namespace CRM.Controllers
                 });
             }
 
+            //Employee login
+
+            var employee = _context.Employees
+
+                .FirstOrDefault(x => x.Email.ToLower() == login.Email.ToLower());
+
+            if (employee != null)
+
+            {
+
+                bool validPassword = BCrypt.Net.BCrypt.Verify(login.Password, employee.Password);
+
+                if (!validPassword)
+
+                    return Unauthorized("Invalid password");
+
+                var employeeToken = GenerateToken(employee.Email, employee.Role, employee.Id);
+
+                return Ok(new
+
+                {
+
+                    token = employeeToken,
+
+                    role = employee.Role,
+
+                    id = employee.Id,
+
+                    name = employee.Name,
+
+                    email = employee.Email,
+
+                    employeeType = employee.EmployeeType
+
+                });
+
+            }
+
+
             // Customer login
             var customer = _context.Customers
                 .FirstOrDefault(x => x.Email.ToLower() == login.Email.ToLower());
@@ -99,7 +138,7 @@ namespace CRM.Controllers
 
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddHours(2),
+                expires: DateTime.Now.AddMinutes(5),
                 signingCredentials: creds
             );
 
