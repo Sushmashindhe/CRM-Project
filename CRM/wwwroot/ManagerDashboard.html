@@ -330,6 +330,25 @@
 
     </div>
 
+    <h4>Assigned Requirements</h4>
+
+    <table class="table table-bordered">
+
+        <thead class="table-dark">
+            <tr>
+                <th>RequirementId</th>
+                <th>CustomerId</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+
+        <tbody id="requirementsTable"></tbody>
+
+    </table>
+
 
 
     <script>
@@ -346,7 +365,7 @@
                 window.location.href = "login.html"
             }, 2500)
 
-           throw new Error("Unauthorized")
+            throw new Error("Unauthorized")
 
         }
 
@@ -504,6 +523,39 @@
             document.getElementById("etype").value = ""
 
             loadEmployees()
+
+        }
+
+        async function loadRequirements() {
+
+            const managerType = localStorage.getItem("managerType");
+
+            const res = await fetch("/api/customerrequirements/assigned/" + managerType, {
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            });
+
+            const data = await res.json();
+
+            let html = "";
+
+            data.forEach(r => {
+
+                html += `
+<tr>
+<td>${r.id}</td>
+<td>${r.customerId}</td>
+<td>${r.title}</td>
+<td>${r.description}</td>
+<td>${r.category}</td>
+<td>${r.status}</td>
+</tr>
+`;
+
+            });
+
+            document.getElementById("requirementsTable").innerHTML = html;
 
         }
 
@@ -679,6 +731,8 @@ onclick="deleteEmployee(${e.id})">
 
         loadManager()
         loadEmployees()
+
+        loadRequirements();
 
     </script>
 

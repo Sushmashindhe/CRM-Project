@@ -202,9 +202,15 @@
                     }
 
                     const user = await res.json();
+                    console.log(data);   // check this in console
+
+
+
 
                     localStorage.setItem("token", user.token);
                     localStorage.setItem("role", user.role);
+                    localStorage.setItem("managerType", user.managerType);
+
 
                     /* Store only needed fields */
 

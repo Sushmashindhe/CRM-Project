@@ -84,4 +84,15 @@ public class CustomerRequirementsController : ControllerBase
 
         return Ok(req);
     }
+
+    [HttpGet("assigned/{type}")]
+    [Authorize(Roles = "Manager")]
+    public IActionResult GetAssigned(string type)
+    {
+        var data = _context.CustomerRequirements
+            .Where(r => r.AssignedTo == type)
+            .ToList();
+
+        return Ok(data);
+    }
 }
