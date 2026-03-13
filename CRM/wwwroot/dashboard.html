@@ -176,15 +176,15 @@
     <table class="table table-bordered">
 
         <thead class="table-dark">
-
             <tr>
+                <th>RequirementId</th>
                 <th>CustomerId</th>
                 <th>Title</th>
                 <th>Description</th>
                 <th>Category</th>
                 <th>Status</th>
+                <th>Action</th>
             </tr>
-
         </thead>
 
         <tbody id="requirementsTable"></tbody>
@@ -390,12 +390,26 @@
             data.forEach(r => {
 
                 html += `
-<tr>
+<tr id="req-${r.id}">
+<td>${r.id}</td>
 <td>${r.customerId}</td>
 <td>${r.title}</td>
 <td>${r.description}</td>
 <td>${r.category}</td>
 <td>${r.status}</td>
+<td>
+
+<button class="btn btn-success btn-sm me-1"
+onclick="pushRequirement(${r.id})">
+Push
+</button>
+
+<button class="btn btn-danger btn-sm"
+onclick="deleteRequirement(${r.id})">
+Reject
+</button>
+
+</td>
 </tr>
 `;
 
@@ -488,6 +502,8 @@ onclick="editManager(${m.id},'${m.name}','${m.email}','${m.managerType}')">
 
 </button>
 
+
+
 <button
 class="btn btn-danger btn-sm"
 onclick="deleteManager(${m.id})">
@@ -495,6 +511,8 @@ onclick="deleteManager(${m.id})">
 <i class="bi bi-trash"></i>
 
 </button>
+
+
 
 </td>
 
@@ -524,6 +542,55 @@ onclick="deleteManager(${m.id})">
 
         }
 
+        async function deleteRequirement(id) {
+
+            if (!confirm("Reject this requirement?")) return;
+
+            const res = await fetch(API + "/api/customerrequirements/requirement/" + id, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            });
+
+            if (res.ok) {
+
+                document.getElementById("req-" + id).remove();
+
+                showToast("Requirement rejected");
+
+            } else {
+
+                showToast("Failed to reject", "error");
+
+            }
+
+        }
+
+        async function pushRequirement(id) {
+
+            if (!confirm("Push this requirement to manager?")) return;
+
+            const res = await fetch(API + "/api/customerrequirements/push/" + id, {
+                method: "PUT",
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            });
+
+            if (res.ok) {
+
+                showToast("Requirement pushed to manager");
+
+                loadRequirements(); // refresh table
+
+            } else {
+
+                showToast("Push failed", "error");
+
+            }
+
+        }
 
 
         /* FILTER */

@@ -48,4 +48,40 @@ public class CustomerRequirementsController : ControllerBase
 
         return Ok(data);
     }
+
+    [HttpDelete("requirement/{id}")]
+    public IActionResult DeleteRequirement(int id)
+    {
+        var req = _context.CustomerRequirements.Find(id);
+
+        if (req == null)
+        {
+            return NotFound("Requirement not found");
+        }
+
+        _context.CustomerRequirements.Remove(req);
+        _context.SaveChanges();
+
+        return Ok("Requirement deleted successfully");
+    }
+
+    [HttpPut("push/{id}")]
+    public IActionResult PushRequirement(int id)
+    {
+        var req = _context.CustomerRequirements.Find(id);
+
+        if (req == null)
+            return NotFound("Requirement not found");
+
+        if (req.Category == "IT")
+            req.AssignedTo = "IT Manager";
+        else
+            req.AssignedTo = "Non IT Manager";
+
+        req.Status = "Assigned";
+
+        _context.SaveChanges();
+
+        return Ok(req);
+    }
 }

@@ -74,5 +74,22 @@ namespace CRM.Controllers
             _context.SaveChanges();
             return Ok("Deleted");
         }
+
+        [HttpDelete("requirement/{id}")]
+        [Authorize(Roles = "SeniorManager")]
+        public IActionResult DeleteRequirement(int id)
+        {
+            var req = _context.CustomerRequirements.Find(id);
+
+            if (req == null)
+                return NotFound();
+
+            _context.CustomerRequirements.Remove(req);
+            _context.SaveChanges();
+
+            return Ok(new { message = "Requirement rejected" });
+        }
+
+
     }
 }

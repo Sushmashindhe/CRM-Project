@@ -12,6 +12,8 @@
 
         public string Status { get; set; } = null!;
 
-        public int CustomerId { get; set; } 
+        public int CustomerId { get; set; }
+
+        public string AssignedTo { get; set; } = null!;
     }
 }
