@@ -353,6 +353,8 @@
 
     <script>
 
+        const API = "https://localhost:7192"
+
         const token = localStorage.getItem("token")
         const role = localStorage.getItem("role")
 
@@ -549,13 +551,51 @@
 <td>${r.title}</td>
 <td>${r.description}</td>
 <td>${r.category}</td>
-<td>${r.status}</td>
-</tr>
+<td>
+    <button class="btn btn-sm ${r.status === 'Completed' ? 'btn-success' : 'btn-warning'}"
+        onclick="toggleStatus(${r.id}, '${r.status}')">
+
+        ${r.status}
+
+    </button>
+</td></tr>
 `;
 
             });
 
             document.getElementById("requirementsTable").innerHTML = html;
+
+        }
+
+        async function toggleStatus(id, currentStatus) {
+
+            let newStatus = currentStatus === "Completed"
+                ? "Assigned"
+                : "Completed"
+
+            const res = await fetch(API + "/api/Customerrequirements/status/" + id, {
+
+                method: "PUT",
+
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
+
+                body: JSON.stringify({
+                    status: newStatus
+                })
+
+            })
+
+            if (!res.ok) {
+
+                alert("Failed to update status")
+                return
+
+            }
+
+            loadRequirements()
 
         }
 

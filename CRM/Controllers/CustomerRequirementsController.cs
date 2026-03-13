@@ -1,5 +1,6 @@
 ﻿using CRM.Data;
 using CRM.Models;
+using CRM.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -94,5 +95,20 @@ public class CustomerRequirementsController : ControllerBase
             .ToList();
 
         return Ok(data);
+    }
+
+    [HttpPut("status/{id}")]
+    public IActionResult UpdateStatus(int id, [FromBody] StatusDTO dto)
+    {
+        var req = _context.CustomerRequirements.FirstOrDefault(x => x.Id == id);
+
+        if (req == null)
+            return NotFound();
+
+        req.Status = dto.Status;
+
+        _context.SaveChanges();
+
+        return Ok(req);
     }
 }
