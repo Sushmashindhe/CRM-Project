@@ -7,35 +7,180 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
     <style>
 
         body {
-            background: #f4f6fb;
+            background: linear-gradient(120deg,#eef2ff,#f8fafc);
+            font-family: Segoe UI;
         }
 
-        .profile-card {
+        /* HEADER */
+
+        .header {
             background: linear-gradient(135deg,#1d3557,#457b9d);
             color: white;
+            padding: 20px;
             border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
         }
 
-        .dashboard-card {
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        /* CARDS */
+
+        .card {
+            border: none;
+            border-radius: 14px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            transition: 0.3s;
         }
+
+            .card:hover {
+                transform: translateY(-3px);
+            }
+
+        /* STAT CARDS */
+
+        .stat-card {
+            padding: 20px;
+            border-radius: 12px;
+            color: white;
+        }
+
+        .stat1 {
+            background: linear-gradient(135deg,#3b82f6,#2563eb);
+        }
+
+        .stat2 {
+            background: linear-gradient(135deg,#10b981,#059669);
+        }
+
+        .stat3 {
+            background: linear-gradient(135deg,#f59e0b,#d97706);
+        }
+
+        /* TABLE */
+
+        .table th {
+            background: #1d3557;
+            color: white;
+        }
+
+        /* UNAUTHORIZED */
+
+        .unauthorized-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+        }
+
+        .message-box {
+            text-align: center;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+            .message-box i {
+                font-size: 60px;
+                color: #dc3545;
+                margin-bottom: 15px;
+            }
     </style>
 
 </head>
 
-<body class="container py-5">
 
-    <h2 class="mb-4">Manager Dashboard</h2>
+<body class="container py-4">
 
-    <!-- Manager Profile -->
 
-    <div class="card profile-card p-4 mb-4">
+    <!-- UNAUTHORIZED -->
 
-        <h4>Manager Details</h4>
+    <div id="unauthorizedScreen" class="unauthorized-screen">
+
+        <div class="message-box">
+
+            <i class="bi bi-shield-lock-fill"></i>
+
+            <h3>Unauthorized Access</h3>
+
+            <p>Your session is invalid.</p>
+
+            <p>Redirecting to login page...</p>
+
+        </div>
+
+    </div>
+
+
+    <!-- HEADER -->
+
+    <div class="header d-flex justify-content-between align-items-center mb-4">
+
+        <h3>
+            <i class="bi bi-speedometer2"></i>
+            Manager Dashboard
+        </h3>
+
+        <button onclick="logout()" class="btn btn-light">
+            <i class="bi bi-box-arrow-right"></i> Logout
+        </button>
+
+    </div>
+
+
+    <!-- EMPLOYEE STATISTICS -->
+
+    <div class="row mb-4">
+
+        <div class="col-md-4">
+
+            <div class="stat-card stat1">
+                <h5>Total Employees</h5>
+                <h2 id="totalEmployees">0</h2>
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="stat-card stat2">
+                <h5>IT Employees</h5>
+                <h2 id="itEmployees">0</h2>
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="stat-card stat3">
+                <h5>Non IT Employees</h5>
+                <h2 id="nonItEmployees">0</h2>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- MANAGER DETAILS -->
+
+    <div class="card p-4 mb-4">
+
+        <h5 class="mb-3">
+            <i class="bi bi-person-badge"></i>
+            Manager Details
+        </h5>
 
         <p><b>Name:</b> <span id="mName"></span></p>
         <p><b>Email:</b> <span id="mEmail"></span></p>
@@ -44,54 +189,129 @@
     </div>
 
 
-    <!-- Add / Edit Employee -->
+    <!-- ADD / EDIT EMPLOYEE -->
 
-    <div class="card dashboard-card p-4 mb-4">
+    <div class="card p-4 mb-4">
 
-        <h4>Add / Edit Employee</h4>
+        <h5 class="mb-3">
+            <i class="bi bi-person-plus"></i>
+            Add / Edit Employee
+        </h5>
 
-        <input id="ename" class="form-control mb-2" placeholder="Employee Name">
+        <div class="row g-3">
 
-        <input id="eemail" class="form-control mb-2" placeholder="Employee Email">
+            <div class="col-md-3">
+                <input id="ename" class="form-control" placeholder="Employee Name">
+            </div>
 
-        <input id="epassword" type="password" class="form-control mb-2" placeholder="Password">
+            <div class="col-md-3">
+                <input id="eemail" class="form-control" placeholder="Employee Email">
+            </div>
 
-        <input id="ephone" type="tel" maxlength="10" class="form-control mb-1" placeholder="Phone">
+            <div class="col-md-2">
 
-        <div id="phoneError" class="text-danger mb-2" style="display:none;">
-            Phone number must be exactly 10 digits
+                <input id="epassword"
+                       type="password"
+                       class="form-control"
+                       placeholder="Password"
+                       onkeyup="checkPasswordStrength()">
+
+                <div id="passwordError" class="text-danger small mt-1" style="display:none;">
+                    Password must contain uppercase, lowercase, number, special character and 8 characters
+                </div>
+
+            </div>
+
+            <div class="col-md-2">
+                <input id="ephone" type="tel" maxlength="10" class="form-control" placeholder="Phone">
+
+                <div id="phoneError" class="text-danger small mt-1" style="display:none;">
+                    Phone must be exactly 10 digits
+                </div>
+
+            </div>
+
+            <div class="col-md-2">
+                <select id="category" class="form-select" onchange="loadTypes()">
+                    <option value="">Category</option>
+                    <option value="IT">IT</option>
+                    <option value="NonIT">Non IT</option>
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <select id="etype" class="form-select">
+                    <option value="">Employee Type</option>
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <button onclick="saveEmployee()" class="btn btn-success w-100">
+                    <i class="bi bi-save"></i> Save
+                </button>
+            </div>
+
         </div>
-
-        <select id="category" class="form-control mb-2" onchange="loadTypes()">
-            <option value="">Select Category</option>
-            <option value="IT">IT</option>
-            <option value="NonIT">Non IT</option>
-        </select>
-
-        <select id="etype" class="form-control mb-3">
-            <option value="">Select Employee Type</option>
-        </select>
-
-        <button onclick="saveEmployee()" class="btn btn-success w-100 mb-2">
-            Save Employee
-        </button>
-
-        <button onclick="logout()" class="btn btn-secondary w-100">
-            Logout
-        </button>
 
     </div>
 
 
-    <!-- Employees Table -->
+    <!-- SEARCH & FILTER -->
 
-    <div class="card dashboard-card p-4">
+    <div class="card p-3 mb-3">
 
-        <h4 class="mb-3">Employees</h4>
+        <div class="row">
+
+            <div class="col-md-6">
+
+                <input id="searchInput"
+                       onkeyup="applyFilters()"
+                       class="form-control"
+                       placeholder="Search employee name or email">
+
+            </div>
+
+            <div class="col-md-4">
+
+                <select id="filterType" onchange="applyFilters()" class="form-select">
+
+                    <option value="">Employee Type</option>
+                    <option value="Developer">Developer</option>
+                    <option value="QA">QA</option>
+                    <option value="DevOps">DevOps</option>
+                    <option value="HR Services">HR Services</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Sales">Sales</option>
+
+                </select>
+
+            </div>
+
+            <div class="col-md-2">
+
+                <button onclick="clearFilters()" class="btn btn-secondary w-100">
+                    Reset
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- EMPLOYEE TABLE -->
+
+    <div class="card p-3">
+
+        <h5 class="mb-3">
+            <i class="bi bi-people"></i>
+            Employees
+        </h5>
 
         <table class="table table-hover table-bordered">
 
-            <thead class="table-dark">
+            <thead>
 
                 <tr>
                     <th>Name</th>
@@ -99,7 +319,7 @@
                     <th>Phone</th>
                     <th>Employee Type</th>
                     <th>Role</th>
-                    <th>Action</th>
+                    <th width="150">Action</th>
                 </tr>
 
             </thead>
@@ -111,116 +331,140 @@
     </div>
 
 
+
     <script>
 
-        const token = localStorage.getItem("token");
-        const role = localStorage.getItem("role");
+        const token = localStorage.getItem("token")
+        const role = localStorage.getItem("role")
 
-        if (!token) {
-            window.location.href = "ManagerLogin.html";
+        if (!token || role !== "Manager") {
+
+            document.getElementById("unauthorizedScreen").style.display = "flex"
+
+            setTimeout(() => {
+                localStorage.clear()
+                window.location.href = "login.html"
+            }, 2500)
+
+           throw new Error("Unauthorized")
+
         }
 
-        if (role !== "Manager") {
-            alert("Unauthorized access");
-            window.location.href = "ManagerLogin.html";
+
+        /* LOAD MANAGER */
+
+        function loadManager() {
+
+            const user = JSON.parse(localStorage.getItem("user"))
+
+            if (!user) return
+
+            document.getElementById("mName").innerText = user.name || ""
+            document.getElementById("mEmail").innerText = user.email || ""
+            document.getElementById("mType").innerText = user.managerType || ""
+
         }
 
-        /* -----------------------
-        Load Employee Types
-        ----------------------- */
+
+        /* PASSWORD VALIDATION */
+
+        function checkPasswordStrength() {
+
+            const password = document.getElementById("epassword").value
+            const error = document.getElementById("passwordError")
+
+            const strongPattern =
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/
+
+            if (password === "") {
+                error.style.display = "none"
+                return
+            }
+
+            if (!strongPattern.test(password)) {
+                error.style.display = "block"
+            } else {
+                error.style.display = "none"
+            }
+
+        }
+
+
+        /* LOAD TYPES */
 
         function loadTypes() {
 
-            const category = document.getElementById("category").value;
-            const typeDropdown = document.getElementById("etype");
+            const category = document.getElementById("category").value
+            const typeDropdown = document.getElementById("etype")
 
-            let options = "";
+            let options = ""
 
             if (category === "IT") {
 
                 options = `
-<option value="">Select Employee Type</option>
+<option value="">Employee Type</option>
 <option value="Developer">Developer</option>
 <option value="QA">QA</option>
 <option value="DevOps">DevOps</option>
-`;
+`
 
             }
 
             else if (category === "NonIT") {
 
                 options = `
-<option value="">Select Employee Type</option>
+<option value="">Employee Type</option>
 <option value="HR Services">HR Services</option>
 <option value="Finance">Finance</option>
 <option value="Sales">Sales</option>
-`;
+`
 
             }
 
-            typeDropdown.innerHTML = options;
+            typeDropdown.innerHTML = options
 
         }
 
-        /* -----------------------
-        Logout
-        ----------------------- */
 
-        function logout() {
-            localStorage.clear();
-            window.location.href = "ManagerLogin.html";
-        }
+        /* EMPLOYEE CRUD */
 
-        /* -----------------------
-        Load Manager Details
-        ----------------------- */
+        let employeeId = null
+        let employees = []
 
-        function loadManager() {
-
-            const user = JSON.parse(localStorage.getItem("user"));
-
-            if (!user) return;
-
-            document.getElementById("mName").innerText = user.name;
-            document.getElementById("mEmail").innerText = user.email;
-            document.getElementById("mType").innerText = user.managerType;
-
-        }
-
-        /* -----------------------
-        Employee CRUD
-        ----------------------- */
-
-        let employeeId = null;
-
-        /* Add or Update Employee */
 
         async function saveEmployee() {
 
-            const name = document.getElementById("ename").value.trim();
-            const email = document.getElementById("eemail").value.trim();
-            const password = document.getElementById("epassword").value.trim();
-            const phone = document.getElementById("ephone").value.trim();
-            const type = document.getElementById("etype").value;
+            const name = document.getElementById("ename").value.trim()
+            const email = document.getElementById("eemail").value.trim()
+            const password = document.getElementById("epassword").value.trim()
+            const phone = document.getElementById("ephone").value.trim()
+            const type = document.getElementById("etype").value
 
-            const phoneError = document.getElementById("phoneError");
+            const phoneError = document.getElementById("phoneError")
 
-            phoneError.style.display = "none";
-
-            /* Check Empty Fields */
+            phoneError.style.display = "none"
 
             if (!name || !email || !password || !phone || !type) {
-                alert("Please fill all fields");
-                return;
+
+                alert("Please fill all fields")
+                return
+
             }
 
-            /* Phone Validation */
+            const strongPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/
 
-            const phonePattern = /^[0-9]{10}$/;
+            if (!strongPattern.test(password)) {
+                document.getElementById("passwordError").style.display = "block"
+                return
+            }
+
+            const phonePattern = /^[0-9]{10}$/
 
             if (!phonePattern.test(phone)) {
-                phoneError.style.display = "block";
-                return;
+
+                phoneError.style.display = "block"
+                return
+
             }
 
             const emp = {
@@ -230,44 +474,41 @@
                 phone: phone,
                 employeeType: type,
                 role: "Employee"
-            };
+            }
 
-            let url = "/api/employees";
-            let method = "POST";
+            let url = "/api/employees"
+            let method = "POST"
 
             if (employeeId != null) {
-                url = "/api/employees/" + employeeId;
-                method = "PUT";
+
+                url = "/api/employees/" + employeeId
+                method = "PUT"
+
             }
 
             await fetch(url, {
-
                 method: method,
-
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": "Bearer " + token
                 },
-
                 body: JSON.stringify(emp)
+            })
 
-            });
+            employeeId = null
 
-            employeeId = null;
+            document.getElementById("ename").value = ""
+            document.getElementById("eemail").value = ""
+            document.getElementById("epassword").value = ""
+            document.getElementById("ephone").value = ""
+            document.getElementById("etype").value = ""
 
-            document.getElementById("ename").value = "";
-            document.getElementById("eemail").value = "";
-            document.getElementById("epassword").value = "";
-            document.getElementById("ephone").value = "";
-            document.getElementById("etype").value = "";
-
-            loadEmployees();
+            loadEmployees()
 
         }
 
-        /* -----------------------
-        Load Employees
-        ----------------------- */
+
+        /* LOAD EMPLOYEES */
 
         async function loadEmployees() {
 
@@ -275,11 +516,45 @@
                 headers: {
                     "Authorization": "Bearer " + token
                 }
-            });
+            })
 
-            const data = await res.json();
+            employees = await res.json()
 
-            let html = "";
+            renderTable(employees)
+            updateStats()
+
+        }
+
+
+        /* UPDATE STATS */
+
+        function updateStats() {
+
+            document.getElementById("totalEmployees").innerText = employees.length
+
+            let it = employees.filter(e =>
+                e.employeeType === "Developer" ||
+                e.employeeType === "QA" ||
+                e.employeeType === "DevOps"
+            ).length
+
+            let nonit = employees.filter(e =>
+                e.employeeType === "HR Services" ||
+                e.employeeType === "Finance" ||
+                e.employeeType === "Sales"
+            ).length
+
+            document.getElementById("itEmployees").innerText = it
+            document.getElementById("nonItEmployees").innerText = nonit
+
+        }
+
+
+        /* RENDER TABLE */
+
+        function renderTable(data) {
+
+            let html = ""
 
             data.forEach(e => {
 
@@ -295,47 +570,51 @@
 
 <td>
 
-<button onclick="editEmployee(${e.id},'${e.name}','${e.email}','${e.password}','${e.phone}','${e.employeeType}')"
-class="btn btn-warning btn-sm">
-Edit
+<button
+class="btn btn-warning btn-sm me-1"
+onclick="editEmployee(${e.id},'${e.name}','${e.email}','${e.password}','${e.phone}','${e.employeeType}')">
+
+<i class="bi bi-pencil"></i>
+
 </button>
 
-<button onclick="deleteEmployee(${e.id})"
-class="btn btn-danger btn-sm">
-Delete
+<button
+class="btn btn-danger btn-sm"
+onclick="deleteEmployee(${e.id})">
+
+<i class="bi bi-trash"></i>
+
 </button>
 
 </td>
 
 </tr>
 
-`;
+`
 
-            });
+            })
 
-            document.getElementById("employeesTable").innerHTML = html;
+            document.getElementById("employeesTable").innerHTML = html
 
         }
 
-        /* -----------------------
-        Edit Employee
-        ----------------------- */
+
+        /* EDIT */
 
         function editEmployee(id, name, email, password, phone, type) {
 
-            document.getElementById("ename").value = name;
-            document.getElementById("eemail").value = email;
-            document.getElementById("epassword").value = password;
-            document.getElementById("ephone").value = phone;
-            document.getElementById("etype").value = type;
+            document.getElementById("ename").value = name
+            document.getElementById("eemail").value = email
+            document.getElementById("epassword").value = password
+            document.getElementById("ephone").value = phone
+            document.getElementById("etype").value = type
 
-            employeeId = id;
+            employeeId = id
 
         }
 
-        /* -----------------------
-        Delete Employee
-        ----------------------- */
+
+        /* DELETE */
 
         async function deleteEmployee(id) {
 
@@ -344,18 +623,62 @@ Delete
                 headers: {
                     "Authorization": "Bearer " + token
                 }
-            });
+            })
 
-            loadEmployees();
+            loadEmployees()
 
         }
 
-        /* -----------------------
-        Initialize Dashboard
-        ----------------------- */
 
-        loadManager();
-        loadEmployees();
+        /* FILTER */
+
+        function applyFilters() {
+
+            let search = document.getElementById("searchInput").value.toLowerCase()
+            let type = document.getElementById("filterType").value
+
+            let filtered = employees.filter(e => {
+
+                let matchSearch =
+                    e.name.toLowerCase().includes(search) ||
+                    e.email.toLowerCase().includes(search)
+
+                let matchType =
+                    !type || e.employeeType === type
+
+                return matchSearch && matchType
+
+            })
+
+            renderTable(filtered)
+
+        }
+
+
+        function clearFilters() {
+
+            document.getElementById("searchInput").value = ""
+            document.getElementById("filterType").value = ""
+
+            renderTable(employees)
+
+        }
+
+
+        /* LOGOUT */
+
+        function logout() {
+
+            localStorage.clear()
+            window.location.href = "login.html"
+
+        }
+
+
+        /* INIT */
+
+        loadManager()
+        loadEmployees()
 
     </script>
 

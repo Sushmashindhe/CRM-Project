@@ -205,10 +205,16 @@
 
                     localStorage.setItem("token", user.token);
                     localStorage.setItem("role", user.role);
-                    localStorage.setItem("user", JSON.stringify(user));
+
+                    /* Store only needed fields */
+
+                    localStorage.setItem("user", JSON.stringify({
+                        name: user.name,
+                        email: user.email,
+                        managerType: user.managerType
+                    }));
 
                     window.location.href = "ManagerDashboard.html";
-
                 });
 
         }

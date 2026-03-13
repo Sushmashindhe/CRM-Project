@@ -55,7 +55,9 @@ namespace CRM.Controllers
                 {
                     token = managerToken,
                     role = manager.Role,
-                    email = manager.Email
+                    name = manager.Name,
+                    email = manager.Email,
+                    managerType = manager.ManagerType
                 });
             }
 
