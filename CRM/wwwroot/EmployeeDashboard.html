@@ -7,35 +7,117 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
     <style>
 
         body {
-            background: #f4f6fb;
+            background: linear-gradient(120deg,#eef2ff,#f8fafc);
+            font-family: Segoe UI;
         }
 
-        .profile-card {
+        /* HEADER */
+
+        .header {
             background: linear-gradient(135deg,#1d3557,#457b9d);
             color: white;
+            padding: 20px;
             border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
         }
 
-        .dashboard-card {
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        /* CARDS */
+
+        .card {
+            border: none;
+            border-radius: 14px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            transition: 0.3s;
         }
+
+            .card:hover {
+                transform: translateY(-3px);
+            }
+
+        /* UNAUTHORIZED */
+
+        .unauthorized-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+        }
+
+        .message-box {
+            text-align: center;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+            .message-box i {
+                font-size: 60px;
+                color: #dc3545;
+                margin-bottom: 15px;
+            }
     </style>
 
 </head>
 
-<body class="container py-5">
 
-    <h2 class="mb-4">Employee Dashboard</h2>
+<body class="container py-4">
 
-    <!-- Employee Profile -->
 
-    <div class="card profile-card p-4 mb-4">
+    <!-- UNAUTHORIZED SCREEN -->
 
-        <h4>Your Profile</h4>
+    <div id="unauthorizedScreen" class="unauthorized-screen">
+
+        <div class="message-box">
+
+            <i class="bi bi-shield-lock-fill"></i>
+
+            <h3>Unauthorized Access</h3>
+
+            <p>Your session is invalid.</p>
+
+            <p>Redirecting to login page...</p>
+
+        </div>
+
+    </div>
+
+
+    <!-- HEADER -->
+
+    <div class="header d-flex justify-content-between align-items-center mb-4">
+
+        <h3>
+            <i class="bi bi-speedometer2"></i>
+            Employee Dashboard
+        </h3>
+
+        <button onclick="logout()" class="btn btn-light">
+            <i class="bi bi-box-arrow-right"></i> Logout
+        </button>
+
+    </div>
+
+
+    <!-- EMPLOYEE PROFILE -->
+
+    <div class="card p-4 mb-4">
+
+        <h5 class="mb-3">
+            <i class="bi bi-person-badge"></i>
+            Your Profile
+        </h5>
 
         <p><b>Name:</b> <span id="empName"></span></p>
         <p><b>Email:</b> <span id="empEmail"></span></p>
@@ -44,88 +126,128 @@
 
     </div>
 
-    <!-- Edit Employee -->
 
-    <div class="card dashboard-card p-4">
+    <!-- EDIT DETAILS -->
 
-        <h4>Edit Your Details</h4>
+    <div class="card p-4">
 
-        <input id="ename" class="form-control mb-2" placeholder="Name">
+        <h5 class="mb-3">
+            <i class="bi bi-pencil-square"></i>
+            Edit Your Details
+        </h5>
 
-        <input id="eemail" class="form-control mb-2" placeholder="Email">
+        <div class="row g-3">
 
-        <input id="epassword" type="password" class="form-control mb-2" placeholder="Password">
+            <div class="col-md-3">
+                <input id="ename" class="form-control" placeholder="Name">
+            </div>
 
-        <input id="ephone" class="form-control mb-3" placeholder="Phone">
+            <div class="col-md-3">
+                <input id="eemail" class="form-control" placeholder="Email">
+            </div>
 
-        <button onclick="updateEmployee()" class="btn btn-primary w-100">
-            Update Details
-        </button>
+            <div class="col-md-2">
+                <input id="epassword" type="password" class="form-control" placeholder="Password">
+            </div>
 
-        <div class="d-flex justify-content-between mt-4">
-            <h4>Employee Dashboard</h4>
+            <div class="col-md-2">
+                <input id="ephone"
+                       type="tel"
+                       maxlength="10"
+                       class="form-control"
+                       placeholder="Phone">
+            </div>
 
-            <button onclick="logout()" class="btn btn-danger">
-                Logout
-            </button>
+            <div class="col-md-2">
+                <button onclick="updateEmployee()" class="btn btn-primary w-100">
+                    <i class="bi bi-save"></i> Update
+                </button>
+            </div>
+
         </div>
 
     </div>
 
+
     <script>
 
-        const API = "https://localhost:7192";
+        const API = "https://localhost:7192"
 
-        const token = localStorage.getItem("token");
-        const role = localStorage.getItem("role");
+        const token = localStorage.getItem("token")
+        const role = localStorage.getItem("role")
 
-        if (!token) {
-            window.location.href = "EmployeeLogin.html";
+        /* AUTH CHECK */
+
+        if (!token || role !== "Employee") {
+
+            document.getElementById("unauthorizedScreen").style.display = "flex"
+
+            setTimeout(() => {
+
+                localStorage.clear()
+                window.location.href = "login.html"
+
+            }, 2500)
+
         }
 
-        if (role !== "Employee") {
-            alert("Unauthorized access");
-            window.location.href = "EmployeeLogin.html";
-        }
 
-        /* Load employee data */
+        /* LOAD EMPLOYEE */
 
-        let employeeId = null;
+        let employeeId = null
 
         function loadEmployee() {
 
-            const user = JSON.parse(localStorage.getItem("user"));
+            const data = JSON.parse(localStorage.getItem("user"));
 
-            if (!user) return;
+            if (!data) {
+                console.log("No user found in localStorage");
+                return;
+            }
+
+            const user = data.user ? data.user : data;
 
             employeeId = user.id;
 
             document.getElementById("empName").innerText = user.name;
             document.getElementById("empEmail").innerText = user.email;
             document.getElementById("empType").innerText = user.employeeType;
-            document.getElementById("empRole").innerText = user.role;
+            document.getElementById("empRole").innerText = localStorage.getItem("role");
 
             document.getElementById("ename").value = user.name;
             document.getElementById("eemail").value = user.email;
-
         }
 
-        /* Update employee */
+        /* UPDATE EMPLOYEE */
 
         async function updateEmployee() {
 
+            const phone = ephone.value.trim()
+
+            /* PHONE VALIDATION */
+
+            const phonePattern = /^[0-9]{10}$/
+
+            if (!phonePattern.test(phone)) {
+
+                alert("Phone number must be exactly 10 digits")
+
+                return
+
+            }
+
             const emp = {
 
-                name: document.getElementById("ename").value,
-                email: document.getElementById("eemail").value,
-                password: document.getElementById("epassword").value,
-                phone: document.getElementById("ephone").value,
-                employeeType: document.getElementById("empType").innerText,
+                name: ename.value,
+                email: eemail.value,
+                password: epassword.value,
+                phone: phone,
+                employeeType: empType.innerText,
                 role: "Employee"
 
-            };
+            }
 
-            const res = await fetch(API + "/api/emp/" + employeeId, {
+            const res = await fetch(API + "/api/employees/" + employeeId ,{
 
                 method: "PUT",
 
@@ -136,39 +258,43 @@
 
                 body: JSON.stringify(emp)
 
-            });
+            })
 
             if (!res.ok) {
 
-                const text = await res.text();
-                alert(text);
-                return;
+                const text = await res.text()
+                alert(text)
+                return
 
             }
 
-            const updated = await res.json();
+            const updated = await res.json()
 
-            localStorage.setItem("user", JSON.stringify(updated));
+            localStorage.setItem("user", JSON.stringify(updated))
 
-            alert("Details updated successfully");
+            alert("Details updated successfully")
 
-            loadEmployee();
+            loadEmployee()
 
         }
 
-        /* Initialize dashboard */
 
-        loadEmployee();
+        /* LOGOUT */
 
         function logout() {
 
-            localStorage.removeItem("token");
-            localStorage.removeItem("role");
-            localStorage.removeItem("user");
+            localStorage.removeItem("token")
+            localStorage.removeItem("role")
+            localStorage.removeItem("user")
 
-            window.location.href = "EmployeeLogin.html";
+            window.location.href = "login.html"
 
         }
+
+
+        /* INIT */
+
+        loadEmployee()
 
     </script>
 

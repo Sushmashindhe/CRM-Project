@@ -87,6 +87,7 @@
             <input id="email" class="form-control">
 
             <div id="emailError" class="error-text">
+
                 Please enter a valid email (must contain @)
             </div>
 
@@ -101,6 +102,7 @@
             <input id="password" type="password" class="form-control">
 
             <div id="passwordError" class="error-text">
+
                 Password must contain 8+ characters, uppercase, lowercase, number and special character
             </div>
 
@@ -109,6 +111,7 @@
         <!-- LOGIN ERROR -->
 
         <div id="loginError" class="alert alert-danger" style="display:none;">
+
             Invalid email or password
         </div>
 
@@ -117,6 +120,7 @@
         <div class="d-grid">
 
             <button onclick="login()" class="btn btn-login text-white">
+
                 Login
             </button>
 
@@ -177,14 +181,12 @@
 
             /* API LOGIN */
 
-            const res = await fetch(API + "/api/emp/login", {
+            const res = await fetch(API + "/api/auth/login", {
 
                 method: "POST",
-
                 headers: {
                     "Content-Type": "application/json"
                 },
-
                 body: JSON.stringify(data)
 
             });
@@ -200,10 +202,16 @@
 
             localStorage.setItem("token", user.token);
             localStorage.setItem("role", user.role);
-            localStorage.setItem("user", JSON.stringify(user));
+
+            localStorage.setItem("user", JSON.stringify({
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                employeeType: user.employeeType,
+                role: user.role
+            }));
 
             window.location.href = "EmployeeDashboard.html";
-
         }
 
     </script>
