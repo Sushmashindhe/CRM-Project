@@ -1,6 +1,8 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -19,31 +21,74 @@
             font-family: Arial, Helvetica, sans-serif;
         }
 
+        /* CARD */
+
         .home-card {
             width: 420px;
-            padding: 40px;
-            border-radius: 10px;
+            padding: 45px 40px;
+            border-radius: 12px;
             background: white;
             text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.25);
         }
+
+            /* TITLE */
 
             .home-card h1 {
                 color: #1a78b4;
                 font-weight: bold;
+                font-size: 38px;
+                margin-bottom: 10px;
             }
 
-            .home-card p {
-                color: #555;
-            }
+        /* TAGLINE */
+
+        .tagline {
+            color: #555;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        /* BUTTON GROUP */
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        /* BUTTONS */
 
         .btn-login {
             background: #2d6cdf;
             border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            width: 120px;
+            transition: all 0.25s ease;
         }
 
             .btn-login:hover {
                 background: #1e54b8;
+                transform: translateY(-4px) scale(1.05);
+                box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+            }
+
+        .btn-register {
+            background: #28a745;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            width: 120px;
+            transition: all 0.25s ease;
+        }
+
+            .btn-register:hover {
+                background: #1e7e34;
+                transform: translateY(-4px) scale(1.05);
+                box-shadow: 0 8px 18px rgba(0,0,0,0.25);
             }
     </style>
 
@@ -53,15 +98,21 @@
 
     <div class="home-card">
 
-        <h1 class="mb-3">CRM System</h1>
+        <h1>CRM System</h1>
 
-        <p class="lead">
-            Manage Employees
+        <p class="tagline">
+            Smarter CRM for Better Business Growth
         </p>
 
-        <a href="login.html" class="btn btn-login text-white btn-lg mt-3">
-            Login
-        </a>
+        <div class="button-group">
+
+            <a href="login.html" class="btn btn-login text-white">
+                Login
+            </a>
+
+           
+
+        </div>
 
     </div>
 

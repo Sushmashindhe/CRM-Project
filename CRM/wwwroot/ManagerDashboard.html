@@ -56,7 +56,11 @@
 
         <input id="epassword" type="password" class="form-control mb-2" placeholder="Password">
 
-        <input id="ephone" class="form-control mb-2" placeholder="Phone">
+        <input id="ephone" type="tel" maxlength="10" class="form-control mb-1" placeholder="Phone">
+
+        <div id="phoneError" class="text-danger mb-2" style="display:none;">
+            Phone number must be exactly 10 digits
+        </div>
 
         <select id="category" class="form-control mb-2" onchange="loadTypes()">
             <option value="">Select Category</option>
@@ -68,13 +72,13 @@
             <option value="">Select Employee Type</option>
         </select>
 
-        <button onclick="saveEmployee()" class="btn btn-success w-100">
+        <button onclick="saveEmployee()" class="btn btn-success w-100 mb-2">
             Save Employee
         </button>
-        <button onclick="logout()" class="btn btn-secondary mb-3">
+
+        <button onclick="logout()" class="btn btn-secondary w-100">
             Logout
         </button>
-
 
     </div>
 
@@ -90,14 +94,12 @@
             <thead class="table-dark">
 
                 <tr>
-
                     <th>Name</th>
                     <th>Email</th>
                     <th>Phone</th>
                     <th>Employee Type</th>
                     <th>Role</th>
                     <th>Action</th>
-
                 </tr>
 
             </thead>
@@ -122,6 +124,10 @@
             alert("Unauthorized access");
             window.location.href = "ManagerLogin.html";
         }
+
+        /* -----------------------
+        Load Employee Types
+        ----------------------- */
 
         function loadTypes() {
 
@@ -156,19 +162,12 @@
 
         }
 
+        /* -----------------------
+        Logout
+        ----------------------- */
+
         function logout() {
             localStorage.clear();
-            window.location.href = "ManagerLogin.html";
-        }
-
-        
-
-        if (!token) {
-            window.location.href = "ManagerLogin.html";
-        }
-
-        if (role !== "Manager") {
-            alert("Unauthorized access");
             window.location.href = "ManagerLogin.html";
         }
 
@@ -188,37 +187,57 @@
 
         }
 
-
         /* -----------------------
         Employee CRUD
         ----------------------- */
 
         let employeeId = null;
 
-
         /* Add or Update Employee */
 
         async function saveEmployee() {
 
+            const name = document.getElementById("ename").value.trim();
+            const email = document.getElementById("eemail").value.trim();
+            const password = document.getElementById("epassword").value.trim();
+            const phone = document.getElementById("ephone").value.trim();
+            const type = document.getElementById("etype").value;
+
+            const phoneError = document.getElementById("phoneError");
+
+            phoneError.style.display = "none";
+
+            /* Check Empty Fields */
+
+            if (!name || !email || !password || !phone || !type) {
+                alert("Please fill all fields");
+                return;
+            }
+
+            /* Phone Validation */
+
+            const phonePattern = /^[0-9]{10}$/;
+
+            if (!phonePattern.test(phone)) {
+                phoneError.style.display = "block";
+                return;
+            }
+
             const emp = {
-
-                name: document.getElementById("ename").value,
-                email: document.getElementById("eemail").value,
-                password: document.getElementById("epassword").value,
-                phone: document.getElementById("ephone").value,
-                employeeType: document.getElementById("etype").value,
+                name: name,
+                email: email,
+                password: password,
+                phone: phone,
+                employeeType: type,
                 role: "Employee"
-
             };
 
             let url = "/api/employees";
             let method = "POST";
 
             if (employeeId != null) {
-
                 url = "/api/employees/" + employeeId;
                 method = "PUT";
-
             }
 
             await fetch(url, {
@@ -227,8 +246,7 @@
 
                 headers: {
                     "Content-Type": "application/json",
-                         "Authorization": "Bearer " + token
-
+                    "Authorization": "Bearer " + token
                 },
 
                 body: JSON.stringify(emp)
@@ -243,15 +261,9 @@
             document.getElementById("ephone").value = "";
             document.getElementById("etype").value = "";
 
-            if (!emp.name || !emp.email || !emp.password || !emp.phone || !emp.employeeType) {
-                alert("Please fill all fields");
-                return;
-            }
-
             loadEmployees();
 
         }
-
 
         /* -----------------------
         Load Employees
@@ -305,7 +317,6 @@ Delete
 
         }
 
-
         /* -----------------------
         Edit Employee
         ----------------------- */
@@ -321,7 +332,6 @@ Delete
             employeeId = id;
 
         }
-
 
         /* -----------------------
         Delete Employee
@@ -340,7 +350,6 @@ Delete
 
         }
 
-
         /* -----------------------
         Initialize Dashboard
         ----------------------- */
@@ -351,5 +360,4 @@ Delete
     </script>
 
 </body>
-
 </html>
