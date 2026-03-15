@@ -121,6 +121,35 @@ namespace CRM.Controllers
             return Unauthorized("User not found");
         }
 
+        [HttpPost("verify-placeofbirth")]
+        public IActionResult VerifyPlaceOfBirth([FromBody] VerifyRequest req)
+        {
+            var user = _context.Managers
+                .FirstOrDefault(x => x.Email.ToLower() == req.Email.ToLower());
+
+            if (user == null)
+                return BadRequest("Email or Place Of Birth incorrect");
+
+            if (user.PlaceOfBirth.Trim().ToLower() != req.PlaceOfBirth.Trim().ToLower())
+                return BadRequest("Email or Place Of Birth incorrect");
+
+            return Ok();
+        }
+        [HttpPost("reset-password")]
+        public IActionResult ResetPassword([FromBody] ResetRequest req)
+        {
+            var user = _context.Managers
+                .FirstOrDefault(x => x.Email.ToLower() == req.Email.ToLower());
+
+            if (user == null)
+                return BadRequest("User not found");
+
+            user.Password = BCrypt.Net.BCrypt.HashPassword(req.NewPassword);
+
+            _context.SaveChanges();
+
+            return Ok("Password updated successfully");
+        }
         private string GenerateToken(string email, string role, int id)
         {
             var claims = new[]

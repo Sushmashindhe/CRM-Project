@@ -40,7 +40,8 @@ namespace CRM.Controllers
                 m.Name,
                 m.Email,
                 m.Role,
-                m.ManagerType
+                m.ManagerType,
+                m.PlaceOfBirth
             }).ToList();
             return Ok(managers);
         }
@@ -57,7 +58,7 @@ namespace CRM.Controllers
             manager.Name = updatedManager.Name;
             manager.Email = updatedManager.Email;
             manager.ManagerType = updatedManager.ManagerType;
-
+            manager.PlaceOfBirth = updatedManager.PlaceOfBirth;
             _context.SaveChanges();
 
             return Ok(new { message = "Manager updated successfully" });

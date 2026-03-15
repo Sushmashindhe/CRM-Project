@@ -217,6 +217,10 @@
             </div>
 
             <div class="col-md-2">
+                <input id="mpob" class="form-control" placeholder="Place Of Birth">
+            </div>
+
+            <div class="col-md-2">
 
                 <select id="mtype" class="form-select">
                     <option value="">Manager Type</option>
@@ -307,6 +311,7 @@
                     <th>Email</th>
                     <th>Role</th>
                     <th>Manager Type</th>
+                    <th>Place of Birth</th>
                     <th width="150">Action</th>
                 </tr>
 
@@ -491,12 +496,12 @@ Reject
 <td>${m.email}</td>
 <td>${m.role}</td>
 <td>${m.managerType}</td>
-
+<td>${m.placeOfBirth ?? ""}</td>
 <td>
 
 <button
 class="btn btn-warning btn-sm me-1"
-onclick="editManager(${m.id},'${m.name}','${m.email}','${m.managerType}')">
+onclick="editManager(${m.id},'${m.name}','${m.email}','${m.managerType}','${m.placeOfBirth}')">
 
 <i class="bi bi-pencil"></i>
 
@@ -643,6 +648,7 @@ onclick="deleteManager(${m.id})">
             const email = document.getElementById("memail").value
             const password = document.getElementById("mpassword").value
             const managerType = document.getElementById("mtype").value
+            const placeOfBirth = document.getElementById("mpob").value
 
             if (!name || !email || !managerType) {
 
@@ -651,7 +657,7 @@ onclick="deleteManager(${m.id})">
 
             }
 
-            const manager = { name, email, password, managerType }
+            const manager = { name, email, password, managerType, placeOfBirth }
 
             let url = API + "/api/managers"
             let method = "POST"
@@ -701,6 +707,7 @@ onclick="deleteManager(${m.id})">
             document.getElementById("mname").value = name
             document.getElementById("memail").value = email
             document.getElementById("mtype").value = type
+            document.getElementById("mpob").value = placeOfBirth
 
         }
 
@@ -716,6 +723,7 @@ onclick="deleteManager(${m.id})">
             document.getElementById("memail").value = ""
             document.getElementById("mpassword").value = ""
             document.getElementById("mtype").value = ""
+            document.getElementById("mpob").value = ""
 
         }
 

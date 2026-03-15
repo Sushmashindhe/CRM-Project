@@ -13,5 +13,8 @@
         public string ManagerType { get; set; } = "";
 
         public string Password { get; set; } = "";
+
+        public string? PlaceOfBirth { get; set; }
+
     }
 }
