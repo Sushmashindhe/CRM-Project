@@ -17,5 +17,7 @@ namespace CRM.Data
 
         public DbSet<Customers> Customers { get; set; }
 
+        public DbSet<ProjectUpdate> ProjectUpdates { get; set; }
+
     }
 }

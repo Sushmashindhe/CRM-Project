@@ -168,6 +168,30 @@
 
     </div>
 
+    <h3>Project Update</h3>
+
+    <input type="text" id="projectName" placeholder="Project Name"><br><br>
+
+<textarea id="updateText" placeholder="Enter project update"></textarea><br><br>
+
+    <button onclick="sendUpdate()">Submit Update</button>
+
+    <h3>Manager Feedback</h3>
+
+    <table class="table table-bordered">
+
+        <thead>
+            <tr>
+                <th>Project</th>
+                <th>Your Update</th>
+                <th>Manager Feedback</th>
+            </tr>
+        </thead>
+
+        <tbody id="employeeUpdates"></tbody>
+
+    </table>
+
 
     <script>
 
@@ -247,7 +271,7 @@
 
             }
 
-            const res = await fetch(API + "/api/employees/" + employeeId ,{
+            const res = await fetch(API + "/api/employees/" + employeeId, {
 
                 method: "PUT",
 
@@ -295,6 +319,72 @@
         /* INIT */
 
         loadEmployee()
+
+        function sendUpdate() {
+
+            const user = JSON.parse(localStorage.getItem("user"));
+
+            if (!user) {
+                alert("User not found. Please login again.");
+                return;
+            }
+
+            const data = {
+                employeeId: user.id,
+                employeeName: user.name,
+                projectName: document.getElementById("projectName").value,
+                updateText: document.getElementById("updateText").value
+            };
+
+            fetch("https://localhost:7192/api/projectupdates", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+                .then(res => res.json())
+                .then(() => {
+                    alert("Update submitted successfully");
+
+                    document.getElementById("projectName").value = "";
+                    document.getElementById("updateText").value = "";
+                })
+                .catch(err => console.log(err));
+
+        }
+
+        function loadEmployeeUpdates() {
+
+            const user = JSON.parse(localStorage.getItem("user"));
+
+            fetch("https://localhost:7192/api/projectupdates")
+                .then(res => res.json())
+                .then(data => {
+
+                    let table = document.getElementById("employeeUpdates");
+
+                    table.innerHTML = "";
+
+                    data
+                        .filter(u => u.employeeId === user.id)
+                        .forEach(u => {
+
+                            table.innerHTML += `
+<tr>
+<td>${u.projectName}</td>
+<td>${u.updateText}</td>
+<td>${u.feedback ?? "Waiting for feedback"}</td>
+</tr>
+`;
+
+                        });
+
+                });
+
+        }
+
+        loadEmployeeUpdates();
 
     </script>
 

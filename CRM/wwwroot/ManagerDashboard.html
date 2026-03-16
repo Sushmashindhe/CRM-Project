@@ -352,6 +352,26 @@
 
     </table>
 
+    <h3>Employee Project Updates</h3>
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Employee ID</th>
+                <th>Name</th>
+                <th>Project</th>
+                <th>Update</th>
+                <th>Date</th>
+                <th>Feedback</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody id="updatesTable"></tbody>
+    </table>
+
+
+
 
 
     <script>
@@ -555,12 +575,12 @@
 <td>${r.description}</td>
 <td>${r.category}</td>
 <td>
-    <button class="btn btn-sm ${r.status === 'Completed' ? 'btn-success' : 'btn-warning'}"
-        onclick="toggleStatus(${r.id}, '${r.status}')">
+        <button class="btn btn-sm ${r.status === 'Completed' ? 'btn-success' : 'btn-warning'}"
+            onclick="toggleStatus(${r.id}, '${r.status}')">
 
-        ${r.status}
+            ${r.status}
 
-    </button>
+        </button>
 </td></tr>
 `;
 
@@ -801,11 +821,75 @@ onclick="deleteEmployee(${e.id})">
 
         }
 
+        function loadUpdates() {
+
+            fetch("https://localhost:7192/api/projectupdates")
+                .then(res => res.json())
+                .then(data => {
+
+                    let table = document.getElementById("updatesTable");
+                    table.innerHTML = "";
+
+                    data.forEach(u => {
+
+                        table.innerHTML += `
+<tr>
+<td>${u.employeeId}</td>
+<td>${u.employeeName}</td>
+<td>${u.projectName}</td>
+<td>${u.updateText}</td>
+<td>${new Date(u.createdAt).toLocaleString()}</td>
+
+<td>${u.feedback ?? ""}</td>
+
+<td>
+<button class="btn btn-sm btn-primary"
+onclick="sendFeedback(${u.id})">
+Give Feedback
+</button>
+</td>
+
+</tr>
+`;
+
+                    });
+
+                });
+        }
+        loadUpdates();
+
+        function sendFeedback(updateId) {
+
+            const feedback = prompt("Enter feedback for employee:");
+
+            if (!feedback) return;
+
+            fetch("https://localhost:7192/api/projectupdates/feedback/" + updateId, {
+
+                method: "PUT",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify(feedback)
+
+            })
+                .then(res => res.json())
+                .then(() => {
+
+                    alert("Feedback sent");
+                    loadUpdates();
+
+                });
+
+        }
+
 
         /* INIT */
 
-        loadManager()
-        loadEmployees()
+        loadManager();
+        loadEmployees();
 
         loadRequirements();
 
