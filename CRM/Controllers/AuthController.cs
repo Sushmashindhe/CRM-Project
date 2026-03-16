@@ -54,6 +54,7 @@ namespace CRM.Controllers
                 return Ok(new
                 {
                     token = managerToken,
+                    id = manager.Id,
                     role = manager.Role,
                     name = manager.Name,
                     email = manager.Email,
@@ -167,7 +168,7 @@ namespace CRM.Controllers
 
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(5),
+                expires: DateTime.Now.AddMinutes(2),
                 signingCredentials: creds
             );
 

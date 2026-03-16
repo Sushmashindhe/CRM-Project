@@ -130,6 +130,9 @@
             Manager Dashboard
         </h3>
 
+        <button onclick="toggleManagerStatus()" class="btn btn-warning me-2">
+            Toggle Active/Inactive
+        </button>
         <button onclick="logout()" class="btn btn-light">
             <i class="bi bi-box-arrow-right"></i> Logout
         </button>
@@ -719,6 +722,38 @@ onclick="deleteEmployee(${e.id})">
 
             loadEmployees()
 
+        }
+        async function toggleManagerStatus() {
+
+            const user = JSON.parse(localStorage.getItem("user"));
+
+            if (!user || !user.id) {
+                alert("Manager ID not found. Please login again.");
+                return;
+            }
+
+            try {
+
+                const res = await fetch(API + "/api/managers/status/" + user.id, {
+                    method: "PUT",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                });
+
+                if (!res.ok) {
+                    alert("Failed to update status");
+                    return;
+                }
+
+                const status = await res.text();
+
+                alert("Status changed to: " + status);
+
+            } catch (error) {
+                console.error(error);
+                alert("Error updating status");
+            }
         }
 
 

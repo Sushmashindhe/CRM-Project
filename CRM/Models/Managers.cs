@@ -16,5 +16,7 @@
 
         public string? PlaceOfBirth { get; set; }
 
+        public string Status { get; set; } = "Active";
+
     }
 }

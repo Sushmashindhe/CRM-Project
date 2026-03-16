@@ -271,10 +271,10 @@
 
             <div class="col-md-3">
 
-                <select id="filterStatus" class="form-select">
+                <select id="filterStatus" onchange="applyFilters()" class="form-select">
                     <option value="">Status</option>
-                    <option>Active</option>
-                    <option>Inactive</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
                 </select>
 
             </div>
@@ -312,6 +312,7 @@
                     <th>Role</th>
                     <th>Manager Type</th>
                     <th>Place of Birth</th>
+                    <th>Status</th>
                     <th width="150">Action</th>
                 </tr>
 
@@ -481,12 +482,15 @@ Reject
 
 
         /* RENDER TABLE */
-
         function renderTable(data) {
 
             let html = ""
 
             data.forEach(m => {
+
+                let statusBadge = m.status === "Active"
+                    ? `<span class="badge bg-success">Active</span>`
+                    : `<span class="badge bg-danger">Inactive</span>`
 
                 html += `
 
@@ -497,6 +501,8 @@ Reject
 <td>${m.role}</td>
 <td>${m.managerType}</td>
 <td>${m.placeOfBirth ?? ""}</td>
+<td>${statusBadge}</td>
+
 <td>
 
 <button
@@ -507,8 +513,6 @@ onclick="editManager(${m.id},'${m.name}','${m.email}','${m.managerType}','${m.pl
 
 </button>
 
-
-
 <button
 class="btn btn-danger btn-sm"
 onclick="deleteManager(${m.id})">
@@ -517,18 +521,14 @@ onclick="deleteManager(${m.id})">
 
 </button>
 
-
-
 </td>
 
 </tr>
 
 `
-
             })
 
             document.getElementById("managersTable").innerHTML = html
-
         }
 
 
@@ -604,25 +604,24 @@ onclick="deleteManager(${m.id})">
 
             let search = document.getElementById("searchInput").value.toLowerCase()
             let type = document.getElementById("filterType").value
+            let status = document.getElementById("filterStatus").value
 
             let filtered = managers.filter(m => {
 
                 let matchesSearch =
-
                     m.name.toLowerCase().includes(search) ||
-                    m.email.toLowerCase().includes(search) ||
-                    m.role.toLowerCase().includes(search)
+                    m.email.toLowerCase().includes(search)
 
                 let matchesType =
-
                     !type || m.managerType === type
 
-                return matchesSearch && matchesType
+                let matchesStatus =
+                    !status || m.status === status
 
+                return matchesSearch && matchesType && matchesStatus
             })
 
             renderTable(filtered)
-
         }
 
 

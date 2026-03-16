@@ -41,7 +41,8 @@ namespace CRM.Controllers
                 m.Email,
                 m.Role,
                 m.ManagerType,
-                m.PlaceOfBirth
+                m.PlaceOfBirth,
+                m.Status
             }).ToList();
             return Ok(managers);
         }
@@ -91,6 +92,20 @@ namespace CRM.Controllers
             return Ok(new { message = "Requirement rejected" });
         }
 
+        [HttpPut("status/{id}")]
+        [Authorize(Roles = "Manager,SeniorManager")]
+        public IActionResult UpdateStatus(int id)
+        {
+            var manager = _context.Managers.Find(id);
 
+            if (manager == null)
+                return NotFound();
+
+            manager.Status = manager.Status == "Active" ? "Inactive" : "Active";
+
+            _context.SaveChanges();
+
+            return Ok(new { status = manager.Status });
+        }
     }
 }
