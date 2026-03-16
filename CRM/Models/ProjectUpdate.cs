@@ -8,7 +8,7 @@
         public string ProjectName { get; set; } = null!;
         public string UpdateText { get; set; } = null!;
 
-        public string Feedback { get; set; } = null!;  // NEW
+        public string? Feedback { get; set; }   // NEW
 
         public DateTime CreatedAt { get; set; }
     }
