@@ -51,6 +51,7 @@ public class EmployeesController : ControllerBase
         existing.Password = emp.Password;
         existing.Phone = emp.Phone;
         existing.EmployeeType = emp.EmployeeType;
+        existing.PlaceOfBirth = emp.PlaceOfBirth;
 
         emp.Password = BCrypt.Net.BCrypt.HashPassword(emp.Password);
 

@@ -130,9 +130,10 @@
             Manager Dashboard
         </h3>
 
-        <button onclick="toggleManagerStatus()" class="btn btn-warning me-2">
-            Toggle Active/Inactive
+        <button id="statusBtn" onclick="toggleManagerStatus()" class="btn btn-warning me-2">
+            Active
         </button>
+
         <button onclick="logout()" class="btn btn-light">
             <i class="bi bi-box-arrow-right"></i> Logout
         </button>
@@ -234,6 +235,10 @@
 
             </div>
 
+            <div>
+                <input id="epob" class="form-control mb-2" placeholder="Place of Birth">
+            </div>
+
             <div class="col-md-2">
                 <select id="category" class="form-select" onchange="loadTypes()">
                     <option value="">Category</option>
@@ -320,6 +325,7 @@
                     <th>Name</th>
                     <th>Email</th>
                     <th>Phone</th>
+                    <th>Place of Birth</th>
                     <th>Employee Type</th>
                     <th>Role</th>
                     <th width="150">Action</th>
@@ -407,6 +413,8 @@
             document.getElementById("mEmail").innerText = user.email || ""
             document.getElementById("mType").innerText = user.managerType || ""
 
+            updateStatusButton(user.isActive)
+
         }
 
 
@@ -429,6 +437,27 @@
                 error.style.display = "block"
             } else {
                 error.style.display = "none"
+            }
+
+        }
+
+        function updateStatusButton(isActive) {
+
+            const btn = document.getElementById("statusBtn")
+
+            if (isActive) {
+
+                btn.innerText = "Active"
+                btn.classList.remove("btn-danger")
+                btn.classList.add("btn-warning")
+
+            }
+            else {
+
+                btn.innerText = "Inactive"
+                btn.classList.remove("btn-warning")
+                btn.classList.add("btn-danger")
+
             }
 
         }
@@ -482,13 +511,14 @@
             const email = document.getElementById("eemail").value.trim()
             const password = document.getElementById("epassword").value.trim()
             const phone = document.getElementById("ephone").value.trim()
+            const pob = document.getElementById("epob").value.trim();
             const type = document.getElementById("etype").value
 
             const phoneError = document.getElementById("phoneError")
 
             phoneError.style.display = "none"
 
-            if (!name || !email || !password || !phone || !type) {
+            if (!name || !email || !password || !phone || !pob || !type) {
 
                 alert("Please fill all fields")
                 return
@@ -516,6 +546,7 @@
                 email: email,
                 password: password,
                 phone: phone,
+                placeOfBirth: pob,
                 employeeType: type,
                 role: "Employee"
             }
@@ -541,11 +572,12 @@
 
             employeeId = null
 
-            document.getElementById("ename").value = ""
-            document.getElementById("eemail").value = ""
-            document.getElementById("epassword").value = ""
-            document.getElementById("ephone").value = ""
-            document.getElementById("etype").value = ""
+            document.getElementById("ename").value = "";
+            document.getElementById("eemail").value = "";
+            document.getElementById("epassword").value = "";
+            document.getElementById("ephone").value = "";
+            document.getElementById("epob").value = "";
+            document.getElementById("etype").value = "";
 
             loadEmployees()
 
@@ -627,7 +659,7 @@
 
         async function loadEmployees() {
 
-            const res = await fetch("/api/employees", {
+            const res = await fetch(API + "/api/employees", {
                 headers: {
                     "Authorization": "Bearer " + token
                 }
@@ -680,6 +712,7 @@
 <td>${e.name}</td>
 <td>${e.email}</td>
 <td>${e.phone}</td>
+<td>${e.placeOfBirth}</td>
 <td>${e.employeeType}</td>
 <td>${e.role}</td>
 
@@ -687,7 +720,7 @@
 
 <button
 class="btn btn-warning btn-sm me-1"
-onclick="editEmployee(${e.id},'${e.name}','${e.email}','${e.password}','${e.phone}','${e.employeeType}')">
+onclick="editEmployee(${e.id},'${e.name}','${e.email}','${e.password}','${e.phone}','${e.placeOfBirth}','${e.employeeType}')">
 
 <i class="bi bi-pencil"></i>
 
@@ -716,13 +749,14 @@ onclick="deleteEmployee(${e.id})">
 
         /* EDIT */
 
-        function editEmployee(id, name, email, password, phone, type) {
+        function editEmployee(id, name, email, password, phone, pob, type) {
 
-            document.getElementById("ename").value = name
-            document.getElementById("eemail").value = email
-            document.getElementById("epassword").value = password
-            document.getElementById("ephone").value = phone
-            document.getElementById("etype").value = type
+            document.getElementById("ename").value = name;
+            document.getElementById("eemail").value = email;
+            document.getElementById("epassword").value = password;
+            document.getElementById("ephone").value = phone;
+            document.getElementById("epob").value = pob;
+            document.getElementById("etype").value = type;
 
             employeeId = id
 
@@ -745,36 +779,58 @@ onclick="deleteEmployee(${e.id})">
         }
         async function toggleManagerStatus() {
 
-            const user = JSON.parse(localStorage.getItem("user"));
+            const user = JSON.parse(localStorage.getItem("user"))
 
             if (!user || !user.id) {
-                alert("Manager ID not found. Please login again.");
-                return;
+
+                alert("Manager ID not found")
+
+                return
+
             }
 
             try {
 
                 const res = await fetch(API + "/api/managers/status/" + user.id, {
+
                     method: "PUT",
+
                     headers: {
+
                         "Authorization": "Bearer " + token
+
                     }
-                });
+
+                })
 
                 if (!res.ok) {
-                    alert("Failed to update status");
-                    return;
+
+                    alert("Failed to update status")
+
+                    return
+
                 }
 
-                const status = await res.text();
+                // flip status locally
 
-                alert("Status changed to: " + status);
+                user.isActive = !user.isActive
 
-            } catch (error) {
-                console.error(error);
-                alert("Error updating status");
+                localStorage.setItem("user", JSON.stringify(user))
+
+                updateStatusButton(user.isActive)
+
             }
+
+            catch (error) {
+
+                console.error(error)
+
+                alert("Error updating status")
+
+            }
+
         }
+
 
 
         /* FILTER */

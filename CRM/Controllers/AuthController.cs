@@ -125,31 +125,50 @@ namespace CRM.Controllers
         [HttpPost("verify-placeofbirth")]
         public IActionResult VerifyPlaceOfBirth([FromBody] VerifyRequest req)
         {
-            var user = _context.Managers
-                .FirstOrDefault(x => x.Email.ToLower() == req.Email.ToLower());
+            // First check Manager
+            var manager = _context.Managers
+                .FirstOrDefault(x => x.Email == req.Email &&
+                                     x.PlaceOfBirth.ToLower() == req.PlaceOfBirth.ToLower());
 
-            if (user == null)
-                return BadRequest("Email or Place Of Birth incorrect");
+            if (manager != null)
+                return Ok();
 
-            if (user.PlaceOfBirth.Trim().ToLower() != req.PlaceOfBirth.Trim().ToLower())
-                return BadRequest("Email or Place Of Birth incorrect");
+            // Then check Employee
+            var employee = _context.Employees
+                .FirstOrDefault(x => x.Email == req.Email &&
+                                     x.PlaceOfBirth.ToLower() == req.PlaceOfBirth.ToLower());
 
-            return Ok();
+            if (employee != null)
+                return Ok();
+
+            return BadRequest("Email or Place Of Birth incorrect");
         }
+
         [HttpPost("reset-password")]
         public IActionResult ResetPassword([FromBody] ResetRequest req)
         {
             var user = _context.Managers
                 .FirstOrDefault(x => x.Email.ToLower() == req.Email.ToLower());
 
-            if (user == null)
-                return BadRequest("User not found");
+            if (user != null)
+            {
+                user.Password = BCrypt.Net.BCrypt.HashPassword(req.NewPassword);
+                _context.SaveChanges();
+                return Ok("Password updated successfully");
+            }
 
-            user.Password = BCrypt.Net.BCrypt.HashPassword(req.NewPassword);
+            // ADDED: Employee password reset
+            var employee = _context.Employees
+                .FirstOrDefault(x => x.Email.ToLower() == req.Email.ToLower());
 
-            _context.SaveChanges();
+            if (employee != null)
+            {
+                employee.Password = BCrypt.Net.BCrypt.HashPassword(req.NewPassword);
+                _context.SaveChanges();
+                return Ok("Password updated successfully");
+            }
 
-            return Ok("Password updated successfully");
+            return BadRequest("User not found");
         }
         private string GenerateToken(string email, string role, int id)
         {
