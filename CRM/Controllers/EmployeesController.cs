@@ -97,11 +97,31 @@ public IActionResult AddEmployee([FromBody] Employees emp)
         return Ok();
     }
 
+    // ---------------- Total Overview ----------------
+    [AllowAnonymous]
+[HttpGet("total-managers")]
+public IActionResult GetTotalManagers()
+{
+    var totalManagers = _context.Managers.Count(); // All managers in EmployeesController table
+    return Ok(totalManagers);
+}
+
+    // ---------------- Employees per Manager ----------------
     [AllowAnonymous]
     [HttpGet("manager-count")]
-    public IActionResult GetManagerCount()
+    public IActionResult GetEmployeesPerManager()
     {
-        var count = _context.Managers.Count();
-        return Ok(count);
+        var data = _context.Employees
+            .Where(e => e.Role == "Employee")
+            .Include(e => e.Manager)
+            .GroupBy(e => e.Manager != null ? e.Manager.Name : "Unassigned")
+            .Select(g => new
+            {
+                managerName = g.Key,
+                count = g.Count()
+            })
+            .ToList();
+
+        return Ok(data);
     }
 }

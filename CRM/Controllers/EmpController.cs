@@ -127,11 +127,12 @@ namespace CRM.Controllers
             return Ok(existing);
         }
 
-        [HttpGet("employee-count")]
-        public IActionResult GetEmployeeCount()
+        [AllowAnonymous]
+        [HttpGet("total-employees")]
+        public IActionResult GetTotalEmployees()
         {
-            var count = _context.Employees.Count();
-            return Ok(count);
+            var totalEmployees = _context.Employees.Count(); // All employees in EmpController table
+            return Ok(totalEmployees);
         }
 
         [HttpGet("employee-types")]
