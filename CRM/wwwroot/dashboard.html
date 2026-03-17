@@ -458,11 +458,14 @@
                 screen.style.display = "flex";
                 screen.style.pointerEvents = "auto";
 
-                // Delay redirect slightly more so UI renders
                 setTimeout(() => {
                     localStorage.clear();
                     window.location.href = "login.html";
                 }, 3000);
+
+            } else {
+                // ✅ SHOW DASHBOARD
+                document.body.style.display = "block";
             }
 
         });
