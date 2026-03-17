@@ -2,6 +2,8 @@
 using CRM.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -22,21 +24,38 @@ public class EmployeesController : ControllerBase
         return Ok(_context.Employees.ToList());
     }
 
-    [HttpPost]
-    [Authorize(Roles = "Manager")]
-    public IActionResult AddEmployee([FromBody] Employees emp)
-    {
-        emp.Role = "Employee";
-        emp.Password = BCrypt.Net.BCrypt.HashPassword(emp.Password);
 
+
+
+[HttpPost]
+[Authorize(Roles = "Manager")]
+public IActionResult AddEmployee([FromBody] Employees emp)
+{
+    try
+    {
+        var managerClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+
+        if (managerClaim == null)
+            return Unauthorized("Manager ID missing in token");
+
+        int managerId = int.Parse(managerClaim.Value);
+
+        emp.Role = "Employee";
+        emp.ManagerId = managerId; // ✅ THIS FIXES YOUR ISSUE
+        emp.Password = BCrypt.Net.BCrypt.HashPassword(emp.Password);
 
         _context.Employees.Add(emp);
         _context.SaveChanges();
 
         return Ok(emp);
     }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.Message); // 🔥 will show real error
+    }
+}
 
-    [HttpPut("{id}")]
+[HttpPut("{id}")]
     [Authorize(Roles = "Manager")]
 
     public IActionResult UpdateEmployee(int id, Employees emp)
@@ -48,13 +67,14 @@ public class EmployeesController : ControllerBase
 
         existing.Name = emp.Name;
         existing.Email = emp.Email;
-        existing.Password = emp.Password;
         existing.Phone = emp.Phone;
         existing.EmployeeType = emp.EmployeeType;
         existing.PlaceOfBirth = emp.PlaceOfBirth;
 
-        emp.Password = BCrypt.Net.BCrypt.HashPassword(emp.Password);
-
+        if (!string.IsNullOrEmpty(emp.Password))
+        {
+            existing.Password = BCrypt.Net.BCrypt.HashPassword(emp.Password);
+        }
 
         _context.SaveChanges();
 
@@ -75,5 +95,13 @@ public class EmployeesController : ControllerBase
         _context.SaveChanges();
 
         return Ok();
+    }
+
+    [AllowAnonymous]
+    [HttpGet("manager-count")]
+    public IActionResult GetManagerCount()
+    {
+        var count = _context.Managers.Count();
+        return Ok(count);
     }
 }

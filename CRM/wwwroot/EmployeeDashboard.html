@@ -123,6 +123,7 @@
         <p><b>Email:</b> <span id="empEmail"></span></p>
         <p><b>Employee Type:</b> <span id="empType"></span></p>
         <p><b>Role:</b> <span id="empRole"></span></p>
+        <p><b>Manager Name:</b> <span id="empManagerId"></span></p>
 
     </div>
 
@@ -220,26 +221,29 @@
 
         let employeeId = null
 
-        function loadEmployee() {
-
+        async function loadEmployee() {
             const data = JSON.parse(localStorage.getItem("user"));
+            if (!data) return;
 
-            if (!data) {
-                console.log("No user found in localStorage");
-                return;
-            }
+            // Fetch updated profile from API
+            const res = await fetch(`https://localhost:7192/api/emp/profile/${data.id}`, {
+                headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+            });
+            const user = await res.json();
 
-            const user = data.user ? data.user : data;
+            employeeId = user.id; // lowercase
 
-            employeeId = user.id;
-
-            document.getElementById("empName").innerText = user.name;
+            document.getElementById("empName").innerText = user.name;  // lowercase
             document.getElementById("empEmail").innerText = user.email;
             document.getElementById("empType").innerText = user.employeeType;
             document.getElementById("empRole").innerText = localStorage.getItem("role");
+            document.getElementById("empManagerId").innerText = user.managerName ?? "Not Assigned";
 
             document.getElementById("ename").value = user.name;
             document.getElementById("eemail").value = user.email;
+
+            // Save updated user to localStorage
+            localStorage.setItem("user", JSON.stringify(user));
         }
 
         /* UPDATE EMPLOYEE */

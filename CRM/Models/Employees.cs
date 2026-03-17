@@ -17,5 +17,12 @@
         public string Role { get; set; } = "Employee";
 
         public string? PlaceOfBirth { get; set; }
+
+
+        // ✅ ADD THIS
+        public int? ManagerId { get; set; }
+
+        // (optional but recommended)
+        public Managers? Manager { get; set; }
     }
 }

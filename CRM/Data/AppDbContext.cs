@@ -19,5 +19,16 @@ namespace CRM.Data
 
         public DbSet<ProjectUpdate> ProjectUpdates { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Employees>()
+                .HasOne(e => e.Manager)
+                .WithMany(m => m.Employees)
+                .HasForeignKey(e => e.ManagerId)
+                .OnDelete(DeleteBehavior.SetNull);
+        }
+
     }
 }

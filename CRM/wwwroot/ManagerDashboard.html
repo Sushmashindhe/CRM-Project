@@ -683,7 +683,7 @@
 
             }
 
-            await fetch(url, {
+            const res = await fetch(API + url, {
                 method: method,
                 headers: {
                     "Content-Type": "application/json",
@@ -691,6 +691,12 @@
                 },
                 body: JSON.stringify(emp)
             })
+
+            if (!res.ok) {
+                const err = await res.text();
+                alert("Failed to save employee: " + err);
+                return;
+            }
 
             employeeId = null
 
@@ -706,22 +712,28 @@
         }
 
         async function loadRequirements() {
-
             const user = JSON.parse(localStorage.getItem("user"));
+
+            if (!user || !user.managerType) {
+                console.error("Manager type missing in localStorage user object");
+                return; // prevent API call with undefined
+            }
+
             const managerType = user.managerType;
 
-            const res = await fetch("/api/customerrequirements/assigned/" + managerType, {
-                headers: {
-                    "Authorization": "Bearer " + token
-                }
+            const res = await fetch(API + "/api/customerrequirements/assigned/" + managerType, {
+                headers: { "Authorization": "Bearer " + token }
             });
 
-            const data = await res.json();
+            if (!res.ok) {
+                console.error("Failed to fetch requirements:", res.status);
+                return;
+            }
 
+            const data = await res.json();
             let html = "";
 
             data.forEach(r => {
-
                 html += `
 <tr>
 <td>${r.id}</td>
@@ -730,19 +742,15 @@
 <td>${r.description}</td>
 <td>${r.category}</td>
 <td>
-                <button class="btn btn-sm ${r.status === 'Completed' ? 'btn-success' : 'btn-warning'}"
-                    onclick="toggleStatus(${r.id}, '${r.status}')">
-
-                    ${r.status}
-
-                </button>
-</td></tr>
-`;
-
+<button class="btn btn-sm ${r.status === 'Completed' ? 'btn-success' : 'btn-warning'}"
+    onclick="toggleStatus(${r.id}, '${r.status}')">
+    ${r.status}
+</button>
+</td>
+</tr>`;
             });
 
             document.getElementById("requirementsTable").innerHTML = html;
-
         }
 
         async function toggleStatus(id, currentStatus) {
@@ -781,18 +789,23 @@
         /* LOAD EMPLOYEES */
 
         async function loadEmployees() {
+            if (!token) {
+                console.error("No JWT token, cannot load employees");
+                return;
+            }
 
             const res = await fetch(API + "/api/employees", {
-                headers: {
-                    "Authorization": "Bearer " + token
-                }
-            })
+                headers: { "Authorization": "Bearer " + token }
+            });
 
-            employees = await res.json()
+            if (!res.ok) {
+                console.error("Failed to fetch employees:", res.status);
+                return;
+            }
 
-            renderTable(employees)
-            updateStats()
-
+            employees = await res.json();
+            renderTable(employees);
+            updateStats();
         }
 
 

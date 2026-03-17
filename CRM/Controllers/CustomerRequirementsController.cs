@@ -111,4 +111,25 @@ public class CustomerRequirementsController : ControllerBase
 
         return Ok(req);
     }
+
+    [HttpGet("stats")]
+    public IActionResult GetStats()
+    {
+        var stats = _context.CustomerRequirements
+            .GroupBy(x => x.Status)
+            .Select(g => new
+            {
+                status = g.Key,
+                count = g.Count()
+            })
+            .ToList();
+
+        return Ok(stats);
+    }
+
+    [HttpGet("employee-count")]
+    public IActionResult GetEmployeeCount()
+    {
+        return Ok(_context.Employees.Count());
+    }
 }

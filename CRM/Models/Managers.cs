@@ -20,5 +20,8 @@
 
         public string Phone { get; set; } = null!;
 
+        public List<Employees> Employees { get; set; } = new();
+
+
     }
 }

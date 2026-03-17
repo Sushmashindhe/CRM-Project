@@ -80,12 +80,22 @@ namespace CRM.Controllers
         [HttpGet("profile/{id}")]
         public IActionResult GetEmployee(int id)
         {
-            var emp = _context.Employees.Find(id);
+            var emp = _context.Employees
+                .Include(e => e.Manager)  // important
+                .FirstOrDefault(e => e.Id == id);
 
             if (emp == null)
                 return NotFound();
 
-            return Ok(emp);
+            return Ok(new
+            {
+                emp.Id,
+                emp.Name,
+                emp.Email,
+                emp.EmployeeType,
+                emp.ManagerId,
+                ManagerName = emp.Manager != null ? emp.Manager.Name : "Not Assigned"
+            });
         }
 
         /* ============================
@@ -115,6 +125,28 @@ namespace CRM.Controllers
             _context.SaveChanges();
 
             return Ok(existing);
+        }
+
+        [HttpGet("employee-count")]
+        public IActionResult GetEmployeeCount()
+        {
+            var count = _context.Employees.Count();
+            return Ok(count);
+        }
+
+        [HttpGet("employee-types")]
+        public IActionResult EmployeeTypes()
+        {
+            var data = _context.Employees
+                .GroupBy(e => e.EmployeeType.Trim().ToLower())
+                .Select(g => new
+                {
+                    role = g.Key,
+                    count = g.Count()
+                })
+                .ToList();
+
+            return Ok(data);
         }
     }
 }

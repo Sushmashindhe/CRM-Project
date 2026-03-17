@@ -1,124 +1,154 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartCRM Stats Dashboard</title>
+    <title>Stats Dashboard</title>
+
+    <!-- Bootstrap (optional but nice UI) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body {
-            font-family: Segoe UI;
-            background: #f4f7fb;
-        }
-        /* SIDEBAR */ .sidebar {
-            height: 100vh;
-            width: 230px;
-            position: fixed;
-            background: #1a78b4;
-            color: white;
-            padding-top: 20px;
-        }
-
-            .sidebar h4 {
-                text-align: center;
-                margin-bottom: 30px;
-            }
-
-            .sidebar a {
-                display: block;
-                padding: 12px 20px;
-                color: white;
-                text-decoration: none;
-                transition: 0.3s;
-            }
-
-                .sidebar a:hover {
-                    background: #15659a;
-                }
-        /* MAIN AREA */ .main {
-            margin-left: 230px;
-            padding: 30px;
-        }
-        /* KPI CARDS */ .kpi-card {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-            text-align: center;
-            transition: 0.3s;
-        }
-
-            .kpi-card:hover {
-                transform: translateY(-5px);
-            }
-        /* CHARTS */ .chart-box {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-            margin-bottom: 25px;
-        }
-        /* LEADERBOARD */ .leaderboard {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-        }
-        /* TIMELINE */ .timeline {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-        }
-        /* DARK MODE */ .dark-mode {
-            background: #121212;
-            color: white;
-        }
-
-            .dark-mode .kpi-card,
-            .dark-mode .chart-box,
-            .dark-mode .leaderboard,
-            .dark-mode .timeline {
-                background: #1f1f1f;
-            }
-    </style>
 </head>
-<body>
-    <!-- SIDEBAR --><div class="sidebar"><h4>SmartCRM</h4><a href="index.html">Home</a><a href="#">Customers</a><a href="#">Sales</a><a href="#">Reports</a><a href="#">Settings</a></div><!-- MAIN CONTENT --><div class="main"><div class="d-flex justify-content-between mb-4"><h2>CRM Statistics Dashboard</h2><button onclick="toggleDark()" class="btn btn-dark">                Toggle Dark Mode            </button></div><!-- KPI CARDS --><div class="row g-4 mb-4"><div class="col-md-3"><div class="kpi-card"><h3 id="customers">120</h3><p>Total Customers</p></div></div><div class="col-md-3"><div class="kpi-card"><h3 id="sales">85</h3><p>Total Sales</p></div></div><div class="col-md-3"><div class="kpi-card"><h3 id="leads">42</h3><p>Active Leads</p></div></div><div class="col-md-3"><div class="kpi-card"><h3 id="revenue">$12K</h3><p>Revenue</p></div></div></div><!-- CHARTS --><div class="row"><div class="col-md-6"><div class="chart-box"><h5>Sales Growth</h5><canvas id="salesChart"></canvas></div></div><div class="col-md-6"><div class="chart-box"><h5>Customer Distribution</h5><canvas id="customerChart"></canvas></div></div></div><!-- EXTRA PANELS --><div class="row"><div class="col-md-6"><div class="leaderboard"><h5>Top Performing Employees</h5><ul class="list-group"><li class="list-group-item d-flex justify-content-between">                            John <span>$5200</span></li><li class="list-group-item d-flex justify-content-between">                            Sarah <span>$4700</span></li><li class="list-group-item d-flex justify-content-between">                            David <span>$4100</span></li></ul></div></div><div class="col-md-6"><div class="timeline"><h5>Recent Activity</h5><ul><li>Customer Alex registered</li><li>Lead converted by John</li><li>Deal closed worth $1200</li><li>New customer added</li></ul></div></div></div></div>
-    <script>/* DARK MODE */function toggleDark(){document.body.classList.toggle("dark-mode");
-}
 
-/* SALES GRAPH */const salesChart = new Chart(document.getElementById('salesChart'),
-{type:'line',data:{labels:['Jan','Feb','Mar','Apr','May','Jun'],datasets:[{label:'Sales',data:[10,20,30,25,40,60],borderColor:'#1a78b4',fill:true}]
-}
-}
-);
+<body class="container mt-4">
 
-/* CUSTOMER GRAPH */const customerChart = new Chart(document.getElementById('customerChart'),
-{type:'doughnut',data:{labels:['New','Returning','Inactive'],datasets:[{data:[60,40,20],backgroundColor:['#23c4a7','#1a78b4','#ff8c2b']
-}]
-}
-}
-);
+    <h2>📊 Stats Dashboard</h2>
 
-/* LIVE UPDATE SIMULATION */setInterval(()=>{
+    <button onclick="goBack()" class="btn btn-secondary mb-3">⬅ Back</button>
 
-let sales = document.getElementById("sales");
+    <h4>Status Bar Chart</h4>
+    <canvas id="barChart"></canvas>
 
-sales.innerText = parseInt(sales.innerText)+1;
+    <h4 class="mt-5">Status Pie Chart</h4>
+    <canvas id="pieChart"></canvas>
 
-salesChart.data.datasets[0].data.push(Math.floor(Math.random()*60));
-salesChart.data.labels.push("New");
+    <h4>Total Overview</h4>
+    <canvas id="totalChart"></canvas>
 
-if(salesChart.data.labels.length>10){
-salesChart.data.labels.shift();
-salesChart.data.datasets[0].data.shift();
-}
+    <h4 class="mt-5">Employees per Manager</h4>
+    <canvas id="empManagerChart"></canvas>
 
-salesChart.update();
+    <h4>Employee Types</h4>
+    <canvas id="roleChart"></canvas>
 
-},5000);</script>
+    <button onclick="loadAll()" class="btn btn-primary mb-3">
+        🔄 Refresh Stats
+    </button>
+
+    <script>
+
+        function goBack() {
+            window.location.href = "index.html";
+        }
+
+        // ✅ Declare ONLY ONCE
+        let barChart, pieChart, totalChart, roleChart;
+
+        // ================= STATUS =================
+        async function loadCharts() {
+            const res = await fetch("https://localhost:7192/api/customerrequirements/stats", {
+                headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+            });
+
+            const data = await res.json();
+
+            const labels = data.map(x => x.status);
+            const counts = data.map(x => x.count);
+
+            if (barChart) barChart.destroy();
+            if (pieChart) pieChart.destroy();
+
+            barChart = new Chart(document.getElementById("barChart"), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Requests',
+                        data: counts,
+                        backgroundColor: ['blue', 'green', 'orange', 'red']
+                    }]
+                }
+            });
+
+            pieChart = new Chart(document.getElementById("pieChart"), {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: counts,
+                        backgroundColor: ['blue', 'green', 'orange', 'red']
+                    }]
+                }
+            });
+        }
+
+        // ================= TOTAL =================
+        async function loadTotals() {
+            const managerRes = await fetch("https://localhost:7192/api/employees/manager-count", {
+                headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+            });
+
+            const employeeRes = await fetch("https://localhost:7192/api/emp/employee-count", {
+                headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+            });
+
+            const managers = await managerRes.json();
+            const employees = await employeeRes.json();
+
+            if (totalChart) totalChart.destroy();
+
+            totalChart = new Chart(document.getElementById("totalChart"), {
+                type: 'doughnut',
+                data: {
+                    labels: ["Managers", "Employees"],
+                    datasets: [{
+                        data: [managers, employees],
+                        backgroundColor: ["blue", "green"]
+                    }]
+                }
+            });
+        }
+
+        // ================= EMPLOYEE TYPES =================
+        async function loadEmployeeTypes() {
+            const res = await fetch("https://localhost:7192/api/emp/employee-types", {
+                headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+            });
+
+            const data = await res.json();
+
+            const labels = data.map(x => x.role);
+            const counts = data.map(x => x.count);
+
+            if (roleChart) roleChart.destroy();
+
+            roleChart = new Chart(document.getElementById("roleChart"), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "Employees",
+                        data: counts,
+                        backgroundColor: "blue"
+                    }]
+                }
+            });
+        }
+
+        // ================= LOAD ALL =================
+        function loadAll() {
+            loadCharts();
+            loadTotals();
+            loadEmployeeTypes();
+        }
+
+        // Initial load
+        loadAll();
+
+
+    </script>
+
 </body>
-</html>
 
+</html>

@@ -171,15 +171,17 @@ namespace CRM.Controllers
 
             return BadRequest("User not found");
         }
-        private string GenerateToken(string email, string role, int id)
+        private string GenerateToken(string email, string role, int id, string? managerType = null)
         {
-            var claims = new[]
-            {
+            var claims = new List<Claim>
+    {
         new Claim(ClaimTypes.Email, email),
         new Claim(ClaimTypes.Role, role),
-        new Claim("Id", id.ToString())   // IMPORTANT
-
+        new Claim(ClaimTypes.NameIdentifier, id.ToString()) // ✅ must be NameIdentifier
     };
+
+            if (managerType != null)
+                claims.Add(new Claim("ManagerType", managerType));
 
             var key = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!)
@@ -189,7 +191,7 @@ namespace CRM.Controllers
 
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(2),
+                expires: DateTime.Now.AddMinutes(120), // increased for testing
                 signingCredentials: creds
             );
 
