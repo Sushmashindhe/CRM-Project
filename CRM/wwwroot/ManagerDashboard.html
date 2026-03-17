@@ -181,14 +181,71 @@
 
     <div class="card p-4 mb-4">
 
-        <h5 class="mb-3">
-            <i class="bi bi-person-badge"></i>
-            Manager Details
-        </h5>
+        <div class="d-flex justify-content-between">
+
+            <h5 class="mb-3">
+                <i class="bi bi-person-badge"></i>
+                Manager Details
+            </h5>
+
+            <button class="btn btn-sm btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editManagerModal"
+                    onclick="fillManagerEdit()">
+                <i class="bi bi-pencil"></i> Edit
+            </button>
+
+        </div>
 
         <p><b>Name:</b> <span id="mName"></span></p>
         <p><b>Email:</b> <span id="mEmail"></span></p>
+        <p><b>Phone:</b> <span id="mPhone"></span></p>
         <p><b>Manager Type:</b> <span id="mType"></span></p>
+
+    </div>
+
+    <div class="modal fade" id="editManagerModal">
+
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title">Edit Manager</h5>
+
+                    <button class="btn-close"
+                            data-bs-dismiss="modal"></button>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <input id="editName" class="form-control mb-2" placeholder="Name">
+
+                    <input id="editEmail" class="form-control mb-2" placeholder="Email">
+
+                    <input id="editPhone" class="form-control mb-2" placeholder="Phone">
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+
+                    <button class="btn btn-success"
+                            onclick="updateManager()">
+                        Save
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
 
@@ -411,12 +468,20 @@
 
             document.getElementById("mName").innerText = user.name || ""
             document.getElementById("mEmail").innerText = user.email || ""
+            document.getElementById("mPhone").innerText = user.phone || ""
             document.getElementById("mType").innerText = user.managerType || ""
-
-            updateStatusButton(user.isActive)
 
         }
 
+        function fillManagerEdit() {
+
+            const user = JSON.parse(localStorage.getItem("user")) || {}
+
+            document.getElementById("editName").value = user.name || ""
+            document.getElementById("editEmail").value = user.email || ""
+            document.getElementById("editPhone").value = user.phone ? user.phone : ""
+
+        }
 
         /* PASSWORD VALIDATION */
 
@@ -460,6 +525,63 @@
 
             }
 
+        }
+
+        async function updateManager() {
+            const user = JSON.parse(localStorage.getItem("user"));
+
+            const name = document.getElementById("editName").value.trim();
+            const email = document.getElementById("editEmail").value.trim();
+            const phone = document.getElementById("editPhone").value.trim();
+
+            // 🔹 Validate required fields
+            if (!name || !email || !phone) {
+                alert("Please fill all fields, including phone.");
+                return;
+            }
+
+            // 🔹 Optional: Validate phone format (10 digits)
+            const phonePattern = /^[0-9]{10}$/;
+            if (!phonePattern.test(phone)) {
+                alert("Phone number must be exactly 10 digits.");
+                return;
+            }
+
+            try {
+                const res = await fetch(API + "/api/managers/" + user.id, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + token
+                    },
+                    body: JSON.stringify({
+                        id: user.id,                  // include ID
+                        name: name,
+                        email: email,
+                        phone: phone,
+                        role: user.role,              // keep role
+                        managerType: user.managerType // keep managerType
+                    })
+                });
+
+                if (!res.ok) {
+                    const errorText = await res.text();
+                    alert("Update failed: " + errorText);
+                    return;
+                }
+
+                // Update localStorage
+                user.name = name;
+                user.email = email;
+                user.phone = phone;
+                localStorage.setItem("user", JSON.stringify(user));
+
+                loadManager();
+                alert("Manager updated successfully");
+            } catch (err) {
+                console.error(err);
+                alert("An error occurred while updating manager.");
+            }
         }
 
 
@@ -585,7 +707,8 @@
 
         async function loadRequirements() {
 
-            const managerType = localStorage.getItem("managerType");
+            const user = JSON.parse(localStorage.getItem("user"));
+            const managerType = user.managerType;
 
             const res = await fetch("/api/customerrequirements/assigned/" + managerType, {
                 headers: {
@@ -607,12 +730,12 @@
 <td>${r.description}</td>
 <td>${r.category}</td>
 <td>
-        <button class="btn btn-sm ${r.status === 'Completed' ? 'btn-success' : 'btn-warning'}"
-            onclick="toggleStatus(${r.id}, '${r.status}')">
+                <button class="btn btn-sm ${r.status === 'Completed' ? 'btn-success' : 'btn-warning'}"
+                    onclick="toggleStatus(${r.id}, '${r.status}')">
 
-            ${r.status}
+                    ${r.status}
 
-        </button>
+                </button>
 </td></tr>
 `;
 
@@ -950,6 +1073,6 @@ Give Feedback
         loadRequirements();
 
     </script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

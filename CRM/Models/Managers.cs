@@ -18,5 +18,7 @@
 
         public string Status { get; set; } = "Active";
 
+        public string Phone { get; set; } = null!;
+
     }
 }

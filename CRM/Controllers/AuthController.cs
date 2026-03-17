@@ -58,6 +58,7 @@ namespace CRM.Controllers
                     role = manager.Role,
                     name = manager.Name,
                     email = manager.Email,
+                    phone = manager.Phone,   // ✅ add this
                     managerType = manager.ManagerType
                 });
             }
@@ -177,6 +178,7 @@ namespace CRM.Controllers
         new Claim(ClaimTypes.Email, email),
         new Claim(ClaimTypes.Role, role),
         new Claim("Id", id.ToString())   // IMPORTANT
+
     };
 
             var key = new SymmetricSecurityKey(

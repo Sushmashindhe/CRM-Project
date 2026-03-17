@@ -42,27 +42,28 @@ namespace CRM.Controllers
                 m.Role,
                 m.ManagerType,
                 m.PlaceOfBirth,
+                m.Phone,
                 m.Status
             }).ToList();
             return Ok(managers);
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "SeniorManager")]
-        public IActionResult UpdateManager(int id, [FromBody] Managers updatedManager)
+        [Authorize(Roles = "SeniorManager,Manager")]
+        public IActionResult UpdateManager(int id, [FromBody] Managers updated)
         {
             var manager = _context.Managers.Find(id);
 
             if (manager == null)
                 return NotFound();
 
-            manager.Name = updatedManager.Name;
-            manager.Email = updatedManager.Email;
-            manager.ManagerType = updatedManager.ManagerType;
-            manager.PlaceOfBirth = updatedManager.PlaceOfBirth;
+            manager.Name = updated.Name;
+            manager.Email = updated.Email;
+            manager.Phone = updated.Phone;
+
             _context.SaveChanges();
 
-            return Ok(new { message = "Manager updated successfully" });
+            return Ok(manager);
         }
 
         [HttpDelete("{id}")]

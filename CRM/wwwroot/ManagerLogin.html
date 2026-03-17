@@ -140,9 +140,7 @@
 
     <script>
 
-        localStorage.removeItem("token");
-        localStorage.removeItem("role");
-        localStorage.removeItem("user");
+        localStorage.clear();
 
         function login() {
 
@@ -209,7 +207,6 @@
 
                     localStorage.setItem("token", user.token);
                     localStorage.setItem("role", user.role);
-                    localStorage.setItem("managerType", user.managerType);
 
 
                     /* Store only needed fields */
@@ -218,6 +215,7 @@
                         id: user.id,
                         name: user.name,
                         email: user.email,
+                        phone: user.phone,
                         managerType: user.managerType
                     }));
 
