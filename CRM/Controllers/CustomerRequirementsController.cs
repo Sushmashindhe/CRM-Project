@@ -24,6 +24,8 @@ public class CustomerRequirementsController : ControllerBase
 
         req.Status = "Pending"; // Set default status here
 
+        req.AssignedTo = "Not Assigned";
+
         _context.CustomerRequirements.Add(req);
         _context.SaveChanges();
 
