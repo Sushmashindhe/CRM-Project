@@ -52,18 +52,21 @@ namespace CRM.Controllers
         [Authorize(Roles = "SeniorManager,Manager")]
         public IActionResult UpdateManager(int id, [FromBody] Managers updated)
         {
-            var manager = _context.Managers.Find(id);
+            var manager = _context.Managers.FirstOrDefault(m => m.Id == id);
 
             if (manager == null)
                 return NotFound();
 
+            // ✅ Direct update (no null confusion)
             manager.Name = updated.Name;
             manager.Email = updated.Email;
             manager.Phone = updated.Phone;
+            manager.ManagerType = updated.ManagerType;
+            manager.PlaceOfBirth = updated.PlaceOfBirth;
 
             _context.SaveChanges();
 
-            return Ok(manager);
+            return Ok(new { message = "Updated successfully" });
         }
 
         [HttpDelete("{id}")]

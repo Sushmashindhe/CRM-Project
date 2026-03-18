@@ -107,6 +107,11 @@ namespace CRM.Controllers
         [HttpPut("{id}")]
         public IActionResult UpdateEmployee(int id, Employees emp)
         {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            if (userId != id)
+                return Forbid("You can only update your own profile");
+
             var existing = _context.Employees.Find(id);
 
             if (existing == null)
@@ -115,13 +120,6 @@ namespace CRM.Controllers
             existing.Name = emp.Name;
             existing.Email = emp.Email;
             existing.Phone = emp.Phone;
-            existing.EmployeeType = emp.EmployeeType;
-
-            if (!string.IsNullOrEmpty(emp.Password))
-            {
-                existing.Password =
-                    BCrypt.Net.BCrypt.HashPassword(emp.Password);
-            }
 
             _context.SaveChanges();
 

@@ -744,25 +744,24 @@ Reject
             // 👉 EDIT MODE
             else {
 
-                const name = document.getElementById("edit_name").value
-                const email = document.getElementById("edit_email").value
+                const name = document.getElementById("edit_name").value.trim()
+                const email = document.getElementById("edit_email").value.trim()
                 const managerType = document.getElementById("edit_type").value
-                const placeOfBirth = document.getElementById("edit_pob").value
-                const phone = document.getElementById("edit_phone").value
-
-                const phoneRegex = /^[0-9]{10}$/
-
-                if (!phoneRegex.test(phone)) {
-                    showToast("Phone must be exactly 10 digits", "error")
-                    return
-                }
+                const placeOfBirth = document.getElementById("edit_pob").value.trim()
+                const phone = document.getElementById("edit_phone").value.trim()
 
                 if (!name || !email || !managerType || !phone) {
                     showToast("Please fill required fields", "error")
                     return
                 }
 
-                manager = { name, email, managerType, placeOfBirth, phone }
+                manager = {
+                    Name: name,
+                    Email: email,
+                    ManagerType: managerType,
+                    PlaceOfBirth: placeOfBirth,
+                    Phone: phone
+                }
 
                 url = API + "/api/managers/" + editManagerId
                 method = "PUT"
