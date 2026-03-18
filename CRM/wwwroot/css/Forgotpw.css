@@ -1,0 +1,83 @@
+﻿body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(135deg, #2cc1a6, #1e6fa8);
+}
+
+.box {
+    background: white;
+    padding: 35px 40px;
+    width: 350px;
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+    text-align: center;
+}
+
+    .box h2 {
+        margin-bottom: 25px;
+        color: #333;
+    }
+
+input,
+select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 18px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+    input:focus,
+    select:focus {
+        border-color: #2f63d8;
+        box-shadow: 0 0 5px rgba(47, 99, 216, 0.3);
+    }
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: #2f63d8;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+    button:hover {
+        background: #244fb3;
+    }
+
+#resetSection {
+    display: none;
+    margin-top: 10px;
+}
+
+/* message styles */
+.message {
+    font-size: 13px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    display: none;
+}
+
+.success {
+    color: green;
+}
+
+.error {
+    color: red;
+}
+
+.passwordBtn {
+    margin-bottom: 12px;
+}

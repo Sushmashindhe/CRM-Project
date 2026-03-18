@@ -1,0 +1,82 @@
+﻿body {
+    background: linear-gradient(120deg,#eef2ff,#f8fafc);
+    font-family: Segoe UI;
+}
+
+/* HEADER */
+
+.header {
+    background: linear-gradient(135deg,#4f46e5,#6366f1);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+
+/* CARDS */
+
+.card {
+    border: none;
+    border-radius: 14px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    transition: 0.3s;
+}
+
+    .card:hover {
+        transform: translateY(-3px);
+    }
+
+/* STAT CARDS */
+
+.stat-card {
+    padding: 20px;
+    color: white;
+    border-radius: 12px;
+}
+
+.stat1 {
+    background: linear-gradient(135deg,#3b82f6,#2563eb);
+}
+
+.stat2 {
+    background: linear-gradient(135deg,#10b981,#059669);
+}
+
+.stat3 {
+    background: linear-gradient(135deg,#f59e0b,#d97706);
+}
+
+/* TABLE */
+
+.table th {
+    background: #4f46e5;
+    color: white;
+}
+
+/* UNAUTHORIZED SCREEN */
+
+.unauthorized-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+}
+
+.message-box {
+    text-align: center;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+    .message-box i {
+        font-size: 60px;
+        color: #dc3545;
+        margin-bottom: 15px;
+    }

@@ -1,0 +1,62 @@
+﻿body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(90deg,#23c4a7,#1a78b4);
+    font-family: Arial,Helvetica,sans-serif;
+}
+
+.login-card {
+    width: 380px;
+    padding: 35px;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+    .logo h2 {
+        font-weight: bold;
+        color: #1a78b4;
+    }
+
+.login-title {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #555;
+    font-size: 18px;
+}
+
+.btn-register {
+    background: #2d6cdf;
+    border: none;
+}
+
+    .btn-register:hover {
+        background: #1e54b8;
+    }
+
+.help-link {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.error-text {
+    color: red;
+    font-size: 13px;
+    margin-top: 5px;
+    display: none;
+}
+
+.success-text {
+    color: green;
+    font-size: 14px;
+    margin-top: 10px;
+    display: none;
+}

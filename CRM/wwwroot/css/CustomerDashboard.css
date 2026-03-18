@@ -1,0 +1,43 @@
+﻿body {
+    background: #f4f6f9;
+    font-family: "Segoe UI", sans-serif;
+}
+
+.dashboard-header {
+    background: #1f2937;
+    color: white;
+    padding: 18px;
+    border-radius: 8px;
+}
+
+.card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.btn-primary {
+    background: #2563eb;
+    border: none;
+}
+
+.table th {
+    background: #374151;
+    color: white;
+}
+
+.badge {
+    padding: 5px 8px;
+}
+
+.bg-warning {
+    background-color: #f59e0b !important;
+}
+
+.bg-success {
+    background-color: #10b981 !important;
+}
+
+.bg-danger {
+    background-color: #ef4444 !important;
+}
