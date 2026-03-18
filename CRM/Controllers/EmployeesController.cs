@@ -21,13 +21,32 @@ public class EmployeesController : ControllerBase
     [Authorize(Roles = "Manager,SeniorManager")]
     public IActionResult GetEmployees()
     {
-        return Ok(_context.Employees.ToList());
+        var role = User.FindFirst(ClaimTypes.Role)?.Value;
+
+        // 🔹 If Senior Manager → see all employees
+        if (role == "SeniorManager")
+        {
+            return Ok(_context.Employees.ToList());
+        }
+
+        // 🔹 If Manager → see only their employees
+        var managerClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+
+        if (managerClaim == null)
+            return Unauthorized("Manager ID missing in token");
+
+        int managerId = int.Parse(managerClaim.Value);
+
+        var employees = _context.Employees
+            .Where(e => e.ManagerId == managerId)
+            .ToList();
+
+        return Ok(employees);
     }
 
 
 
-
-[HttpPost]
+    [HttpPost]
 [Authorize(Roles = "Manager")]
 public IActionResult AddEmployee([FromBody] Employees emp)
 {
@@ -80,6 +99,7 @@ public IActionResult AddEmployee([FromBody] Employees emp)
 
         return Ok(existing);
     }
+
 
     [HttpDelete("{id}")]
     [Authorize(Roles = "Manager")]

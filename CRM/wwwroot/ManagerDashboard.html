@@ -837,7 +837,30 @@
                 return;
             }
 
-            employees = await res.json();
+            const user = JSON.parse(localStorage.getItem("user"));
+            const managerType = user.managerType;
+
+            let allEmployees = await res.json();
+
+            // ✅ FILTER BASED ON MANAGER TYPE
+            if (managerType === "IT") {
+                employees = allEmployees.filter(e =>
+                    e.employeeType === "Developer" ||
+                    e.employeeType === "QA" ||
+                    e.employeeType === "DevOps"
+                );
+            }
+            else if (managerType === "NonIT") {
+                employees = allEmployees.filter(e =>
+                    e.employeeType === "HR Services" ||
+                    e.employeeType === "Finance" ||
+                    e.employeeType === "Sales"
+                );
+            }
+            else {
+                employees = allEmployees; // fallback
+            }
+
             renderTable(employees);
             updateStats();
         }
