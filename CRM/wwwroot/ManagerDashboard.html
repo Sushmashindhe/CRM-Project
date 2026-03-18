@@ -145,39 +145,7 @@
 
     <!-- EMPLOYEE STATISTICS -->
 
-    <div class="row mb-4">
-
-        <div class="col-md-4">
-
-            <div class="stat-card stat1">
-                <h5>Total Employees</h5>
-                <h2 id="totalEmployees">0</h2>
-            </div>
-
-        </div>
-
-
-        <div class="col-md-4">
-
-            <div class="stat-card stat2">
-                <h5>IT Employees</h5>
-                <h2 id="itEmployees">0</h2>
-            </div>
-
-        </div>
-
-
-        <div class="col-md-4">
-
-            <div class="stat-card stat3">
-                <h5>Non IT Employees</h5>
-                <h2 id="nonItEmployees">0</h2>
-            </div>
-
-        </div>
-
-    </div>
-
+    
 
     <!-- MANAGER DETAILS -->
 
@@ -333,21 +301,29 @@
 
     <div class="card p-3 mb-3">
 
-        <div class="row">
+        <!-- Title -->
+        <div class="mb-2">
+            <label class="fw-semibold text-dark">
+                <i class="bi bi-search"></i> Search & Filter Employees
+            </label>
+        </div>
 
+        <!-- Controls Row -->
+        <div class="row g-2 align-items-center">
+
+            <!-- Search Input -->
             <div class="col-md-6">
-
                 <input id="searchInput"
                        onkeyup="applyFilters()"
                        class="form-control"
-                       placeholder="Search employee name or email">
-
+                       placeholder="Enter employee name or email">
             </div>
 
+            <!-- Dropdown -->
             <div class="col-md-4">
-
-                <select id="filterType" onchange="applyFilters()" class="form-select">
-
+                <select id="filterType"
+                        onchange="applyFilters()"
+                        class="form-select">
                     <option value="">Employee Type</option>
                     <option value="Developer">Developer</option>
                     <option value="QA">QA</option>
@@ -355,23 +331,20 @@
                     <option value="HR Services">HR Services</option>
                     <option value="Finance">Finance</option>
                     <option value="Sales">Sales</option>
-
                 </select>
-
             </div>
 
+            <!-- Reset Button -->
             <div class="col-md-2">
-
-                <button onclick="clearFilters()" class="btn btn-secondary w-100">
+                <button onclick="clearFilters()"
+                        class="btn btn-secondary w-100">
                     Reset
                 </button>
-
             </div>
 
         </div>
 
     </div>
-
 
     <!-- EMPLOYEE TABLE -->
 
