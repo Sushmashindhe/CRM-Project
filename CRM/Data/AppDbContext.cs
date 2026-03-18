@@ -19,6 +19,8 @@ namespace CRM.Data
 
         public DbSet<ProjectUpdate> ProjectUpdates { get; set; }
 
+        public DbSet<RequirementAssignment> RequirementAssignments { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

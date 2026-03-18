@@ -121,6 +121,8 @@
 
         <p><b>Name:</b> <span id="empName"></span></p>
         <p><b>Email:</b> <span id="empEmail"></span></p>
+        <p><b>Phone:</b> <span id="empPhone"></span></p>
+
         <p><b>Employee Type:</b> <span id="empType"></span></p>
         <p><b>Role:</b> <span id="empRole"></span></p>
         <p><b>Manager Name:</b> <span id="empManagerId"></span></p>
@@ -130,7 +132,7 @@
 
     <!-- EDIT DETAILS -->
 
-    <div class="card p-4">
+    <div class="card p-4 mb-4">
 
         <h5 class="mb-3">
             <i class="bi bi-pencil-square"></i>
@@ -147,9 +149,7 @@
                 <input id="eemail" class="form-control" placeholder="Email">
             </div>
 
-            <div class="col-md-2">
-                <input id="epassword" type="password" class="form-control" placeholder="Password">
-            </div>
+
 
             <div class="col-md-2">
                 <input id="ephone"
@@ -169,29 +169,79 @@
 
     </div>
 
-    <h3>Project Update</h3>
+    <!-- PROJECT UPDATE -->
+    <div class="card p-4 mb-4">
 
-    <input type="text" id="projectName" placeholder="Project Name"><br><br>
+        <div class="section-title fw-bold fs-5 mb-3 text-dark">
+            <i class="bi bi-kanban"></i> Project Update
+        </div>
 
-<textarea id="updateText" placeholder="Enter project update"></textarea><br><br>
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Project Name</label>
+            <input type="text"
+                   id="projectName"
+                   class="form-control"
+                   placeholder="Enter project name">
+        </div>
 
-    <button onclick="sendUpdate()">Submit Update</button>
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Update Description</label>
+            <textarea id="updateText"
+                      rows="4"
+                      class="form-control"
+                      placeholder="Enter update...">
+        </textarea>
+        </div>
 
-    <h3>Manager Feedback</h3>
+        <button onclick="sendUpdate()" class="btn btn-primary px-4">
+            <i class="bi bi-send"></i> Submit Update
+        </button>
 
-    <table class="table table-bordered">
+    </div>
 
-        <thead>
-            <tr>
-                <th>Project</th>
-                <th>Your Update</th>
-                <th>Manager Feedback</th>
-            </tr>
-        </thead>
 
-        <tbody id="employeeUpdates"></tbody>
+    <!-- FEEDBACK -->
+    <div class="card p-4 mb-4">
 
-    </table>
+        <div class="section-title">
+            <i class="bi bi-chat-dots"></i> Manager Feedback
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover">
+
+                <thead>
+                    <tr>
+                        <th>Project</th>
+                        <th>Your Update</th>
+                        <th>Feedback</th>
+                    </tr>
+                </thead>
+
+                <tbody id="employeeUpdates"></tbody>
+
+            </table>
+        </div>
+
+    </div>
+
+    <!-- ASSIGNED REQUIREMENTS -->
+    <div class="card p-4 mb-4">
+        <div class="section-title">
+            <i class="bi bi-list-check"></i> Assigned Requirements
+        </div>
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="assignedReqTable"></tbody>
+        </table>
+    </div>
 
 
     <script>
@@ -238,6 +288,7 @@
             document.getElementById("empType").innerText = user.employeeType;
             document.getElementById("empRole").innerText = localStorage.getItem("role");
             document.getElementById("empManagerId").innerText = user.managerName ?? "Not Assigned";
+            document.getElementById("empPhone").innerText = user.phone ?? "Not Available";
 
             document.getElementById("ename").value = user.name;
             document.getElementById("eemail").value = user.email;
@@ -268,9 +319,8 @@
 
                 name: ename.value,
                 email: eemail.value,
-                password: epassword.value,
                 phone: phone,
-                employeeType: empType.innerText,
+                employeeType: document.getElementById("empType").innerText,
                 role: "Employee"
 
             }
@@ -402,6 +452,36 @@
         }
 
         loadEmployeeUpdates();
+
+        function loadAssignedRequirements() {
+
+        const user = JSON.parse(localStorage.getItem("user"));
+
+        fetch(API + "/api/emp/employee/" + user.id, {
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+
+                let table = document.getElementById("assignedReqTable");
+                table.innerHTML = "";
+
+                data.forEach(req => {
+
+                    table.innerHTML += `
+<tr>
+<td>${req.title}</td>
+<td>${req.description}</td>
+<td>
+    <span class="badge bg-primary">${req.status}</span>
+</td>
+</tr>`;
+                });
+            });
+    }
+    loadAssignedRequirements();
 
     </script>
 

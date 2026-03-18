@@ -130,13 +130,15 @@
             Manager Dashboard
         </h3>
 
-        <button id="statusBtn" onclick="toggleManagerStatus()" class="btn btn-warning me-2">
-            Active
-        </button>
+        <div class="d-flex gap-2">
+            <button id="statusBtn" onclick="toggleManagerStatus()" class="btn btn-warning">
+                Active
+            </button>
 
-        <button onclick="logout()" class="btn btn-light">
-            <i class="bi bi-box-arrow-right"></i> Logout
-        </button>
+            <button onclick="logout()" class="btn btn-light">
+                <i class="bi bi-box-arrow-right"></i> Logout
+            </button>
+        </div>
 
     </div>
 
@@ -225,8 +227,11 @@
 
                     <input id="editEmail" class="form-control mb-2" placeholder="Email">
 
-                    <input id="editPhone" class="form-control mb-2" placeholder="Phone">
-
+                    <input id="editPhone"
+                           class="form-control mb-2"
+                           placeholder="Phone"
+                           maxlength="10"
+                           oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,10)">
                 </div>
 
                 <div class="modal-footer">
@@ -269,7 +274,7 @@
                 <input id="eemail" class="form-control" placeholder="Employee Email">
             </div>
 
-            <div class="col-md-2">
+            <div class="col-md-2" id="passwordFieldContainer">
 
                 <input id="epassword"
                        type="password"
@@ -284,16 +289,19 @@
             </div>
 
             <div class="col-md-2">
-                <input id="ephone" type="tel" maxlength="10" class="form-control" placeholder="Phone">
+                <input id="ephone"
+                       type="text"
+                       maxlength="10"
+                       class="form-control"
+                       placeholder="Phone"
+                       oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,10)">
 
-                <div id="phoneError" class="text-danger small mt-1" style="display:none;">
-                    Phone must be exactly 10 digits
-                </div>
+                
 
             </div>
 
-            <div>
-                <input id="epob" class="form-control mb-2" placeholder="Place of Birth">
+            <div class="col-md-3">
+                <input id="epob" class="form-control" placeholder="Place of Birth">
             </div>
 
             <div class="col-md-2">
@@ -541,10 +549,8 @@
             }
 
             // 🔹 Optional: Validate phone format (10 digits)
-            const phonePattern = /^[0-9]{10}$/;
-            if (!phonePattern.test(phone)) {
-                alert("Phone number must be exactly 10 digits.");
-                return;
+            if (phone.length !== 10) {
+                return; // silently block
             }
 
             try {
@@ -636,9 +642,7 @@
             const pob = document.getElementById("epob").value.trim();
             const type = document.getElementById("etype").value
 
-            const phoneError = document.getElementById("phoneError")
-
-            phoneError.style.display = "none"
+           
 
             if (!name || !email || !password || !phone || !pob || !type) {
 
@@ -647,30 +651,35 @@
 
             }
 
-            const strongPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/
-
-            if (!strongPattern.test(password)) {
-                document.getElementById("passwordError").style.display = "block"
-                return
+            if (phone.length !== 10) {
+                return; // silently block
             }
 
-            const phonePattern = /^[0-9]{10}$/
+            
 
-            if (!phonePattern.test(phone)) {
+            let emp = {};
 
-                phoneError.style.display = "block"
-                return
-
-            }
-
-            const emp = {
-                name: name,
-                email: email,
-                password: password,
-                phone: phone,
-                placeOfBirth: pob,
-                employeeType: type,
-                role: "Employee"
+            if (employeeId == null) {
+                // 👉 ADD MODE
+                emp = {
+                    name: name,
+                    email: email,
+                    password: password,
+                    phone: phone,
+                    placeOfBirth: pob,
+                    employeeType: type,
+                    role: "Employee"
+                };
+            } else {
+                // 👉 EDIT MODE (NO PASSWORD)
+                emp = {
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    placeOfBirth: pob,
+                    employeeType: type,
+                    role: "Employee"
+                };
             }
 
             let url = "/api/employees"
@@ -706,6 +715,8 @@
             document.getElementById("ephone").value = "";
             document.getElementById("epob").value = "";
             document.getElementById("etype").value = "";
+            document.getElementById("passwordFieldContainer").style.display = "block";
+
 
             loadEmployees()
 
@@ -746,6 +757,11 @@
     onclick="toggleStatus(${r.id}, '${r.status}')">
     ${r.status}
 </button>
+
+<button class="btn btn-sm btn-primary ms-1"
+    onclick="pushRequirement(${r.id}, '${r.category}')">
+    Push
+</button>
 </td>
 </tr>`;
             });
@@ -783,6 +799,24 @@
 
             loadRequirements()
 
+        }
+
+        async function pushRequirement(reqId) {
+
+            const res = await fetch(API + "/api/customerrequirements/push-to-employees/" + reqId, {
+                method: "POST",
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            });
+
+            if (!res.ok) {
+                alert("Push failed");
+                return;
+            }
+
+            const data = await res.json();
+            alert(data.message);
         }
 
 
@@ -893,6 +927,8 @@ onclick="deleteEmployee(${e.id})">
             document.getElementById("ephone").value = phone;
             document.getElementById("epob").value = pob;
             document.getElementById("etype").value = type;
+            document.getElementById("passwordFieldContainer").style.display = "none";
+
 
             employeeId = id
 

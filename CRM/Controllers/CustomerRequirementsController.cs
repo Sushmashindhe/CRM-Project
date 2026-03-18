@@ -1,8 +1,9 @@
 ﻿using CRM.Data;
-using CRM.Models;
 using CRM.DTOs;
+using CRM.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -133,5 +134,69 @@ public class CustomerRequirementsController : ControllerBase
     public IActionResult GetEmployeeCount()
     {
         return Ok(_context.Employees.Count());
+    }
+
+    [HttpPost("push-to-employees/{id}")]
+    [Authorize(Roles = "Manager")]
+    public IActionResult PushToEmployees(int id)
+    {
+        var req = _context.CustomerRequirements.Find(id);
+
+        if (req == null)
+            return NotFound("Requirement not found");
+
+        // Get manager from token
+        var managerId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+        var manager = _context.Managers.Find(managerId);
+
+        if (manager == null)
+            return Unauthorized();
+
+        List<Employees> employees;
+
+        // 🔥 FILTER BASED ON MANAGER TYPE
+        if (manager.ManagerType == "IT")
+        {
+            employees = _context.Employees
+                .Where(e => e.EmployeeType == "Developer"
+                         || e.EmployeeType == "QA"
+                         || e.EmployeeType == "DevOps")
+                .ToList();
+        }
+        else
+        {
+            employees = _context.Employees
+                .Where(e => e.EmployeeType == "HR Services"
+                         || e.EmployeeType == "Finance"
+                         || e.EmployeeType == "Sales")
+                .ToList();
+        }
+
+        // 🔥 ASSIGN TO EACH EMPLOYEE
+        foreach (var emp in employees)
+        {
+            bool exists = _context.RequirementAssignments
+                .Any(x => x.RequirementId == id && x.EmployeeId == emp.Id);
+
+            if (!exists)
+            {
+                _context.RequirementAssignments.Add(new RequirementAssignment
+                {
+                    RequirementId = id,
+                    EmployeeId = emp.Id,
+                    Status = "Assigned"
+                });
+            }
+        }
+
+        req.Status = "Assigned";
+
+        _context.SaveChanges();
+
+        return Ok(new
+        {
+            message = $"Pushed to {employees.Count} employees"
+        });
     }
 }

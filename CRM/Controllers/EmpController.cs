@@ -92,6 +92,7 @@ namespace CRM.Controllers
                 emp.Id,
                 emp.Name,
                 emp.Email,
+                emp.Phone,
                 emp.EmployeeType,
                 emp.ManagerId,
                 ManagerName = emp.Manager != null ? emp.Manager.Name : "Not Assigned"
@@ -125,6 +126,24 @@ namespace CRM.Controllers
             _context.SaveChanges();
 
             return Ok(existing);
+        }
+
+        [HttpGet("employee/{empId}")]
+        [Authorize(Roles = "Employee")]
+        public IActionResult GetEmployeeRequirements(int empId)
+        {
+            var data = _context.RequirementAssignments
+                .Where(x => x.EmployeeId == empId)
+                .Select(x => new
+                {
+                    x.Requirement.Id,
+                    x.Requirement.Title,
+                    x.Requirement.Description,
+                    x.Status
+                })
+                .ToList();
+
+            return Ok(data);
         }
 
         [AllowAnonymous]

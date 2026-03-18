@@ -94,15 +94,13 @@
                 margin-bottom: 15px;
             }
 
-        .unauthorized-screen {
-            pointer-events: none; /* 🔥 FIX */
-        }
+       
     </style>
 
 </head>
 
 
-<body style="display:none;" class="container py-4">
+<body>
 
     <!-- UNAUTHORIZED MESSAGE -->
 
@@ -114,7 +112,7 @@
 
             <h3>Unauthorized Access</h3>
 
-            <p>Your session is invalid or you do not have permission.</p>
+            <p>Your session is invalid.</p>
 
             <p>Redirecting to login page...</p>
 
@@ -418,14 +416,7 @@
 
     </div>
 
-    <div id="unauthorizedScreen" class="unauthorized-screen">
-        <div class="message-box">
-            <i class="bi bi-shield-lock-fill"></i>
-            <h3>Unauthorized Access</h3>
-            <p>You are not allowed to view this page.</p>
-            <p>Redirecting to login page...</p>
-        </div>
-    </div>
+    
 
 
 
@@ -446,29 +437,20 @@
 
         /* AUTH CHECK */
 
-        document.addEventListener("DOMContentLoaded", function () {
+        if (!token || role !== "SeniorManager") {
 
-            const token = localStorage.getItem("token");
-            const role = localStorage.getItem("role");
+            document.getElementById("unauthorizedScreen").style.display = "flex"
 
-            if (!token || role !== "SeniorManager") {
+            setTimeout(() => {
+                localStorage.clear()
+                window.location.href = "login.html"
+            }, 2500)
 
-                const screen = document.getElementById("unauthorizedScreen");
+            throw new Error("Unauthorized")
 
-                screen.style.display = "flex";
-                screen.style.pointerEvents = "auto";
+        }
 
-                setTimeout(() => {
-                    localStorage.clear();
-                    window.location.href = "login.html";
-                }, 3000);
-
-            } else {
-                // ✅ SHOW DASHBOARD
-                document.body.style.display = "block";
-            }
-
-        });
+        
 
         async function loadRequirements() {
 
