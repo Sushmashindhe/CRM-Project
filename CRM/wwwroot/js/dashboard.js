@@ -371,7 +371,12 @@ async function saveManager() {
 
     showToast(editManagerId ? "Manager updated" : "Manager added")
 
-    cancelEdit()   // 🔥 important (switch back to add form)
+    showToast(editManagerId ? "Manager updated" : "Manager added")
+
+    // ✅ CLEAR FORM AFTER ADD
+    clearForm()
+
+    cancelEdit()   // switch back to add form
     loadManagers()
 }
 
