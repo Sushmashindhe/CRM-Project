@@ -77,6 +77,10 @@ public class CustomerRequirementsController : ControllerBase
         if (req == null)
             return NotFound("Requirement not found");
 
+        // ✅ ADD THIS CHECK (prevent pushing again)
+        if (req.Status == "Assigned")
+            return BadRequest("Requirement already pushed");
+
         if (req.Category == "IT")
             req.AssignedTo = "IT Manager";
         else

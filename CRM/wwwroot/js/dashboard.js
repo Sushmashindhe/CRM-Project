@@ -51,7 +51,8 @@ async function loadRequirements() {
 <td>${r.status}</td>
 <td>
 
-<button class="btn btn-success btn-sm me-1"
+<button id="push-btn-${r.id}"
+class="btn btn-success btn-sm me-1"
 onclick="pushRequirement(${r.id})">
 Push
 </button>
@@ -208,6 +209,11 @@ async function pushRequirement(id) {
 
     if (!confirm("Push this requirement to manager?")) return;
 
+    const btn = document.getElementById("push-btn-" + id);
+
+    // 🔒 Disable immediately to prevent double click
+    if (btn) btn.disabled = true;
+
     const res = await fetch(API + "/api/customerrequirements/push/" + id, {
         method: "PUT",
         headers: {
@@ -219,17 +225,25 @@ async function pushRequirement(id) {
 
         showToast("Requirement pushed to manager");
 
+        // Optional: change button text
+        if (btn) {
+            btn.innerText = "Pushed";
+            btn.classList.remove("btn-success");
+            btn.classList.add("btn-secondary");
+        }
+
         loadRequirements(); // refresh table
 
     } else {
 
+        // ❌ If failed, re-enable button
+        if (btn) btn.disabled = false;
+
         showToast("Push failed", "error");
 
     }
-
+    loadRequirements();
 }
-
-
 /* FILTER */
 
 function applyFilters() {
