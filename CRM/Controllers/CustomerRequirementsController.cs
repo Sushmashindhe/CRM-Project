@@ -69,32 +69,16 @@ public class CustomerRequirementsController : ControllerBase
         return Ok("Requirement deleted successfully");
     }
 
-    [HttpPut("push/{id}")]
-    public IActionResult PushRequirement(int id)
-    {
-        var req = _context.CustomerRequirements.Find(id);
 
-        if (req == null)
-            return NotFound("Requirement not found");
 
-        if (req.Category == "IT")
-            req.AssignedTo = "IT Manager";
-        else
-            req.AssignedTo = "Non IT Manager";
-
-        req.Status = "Assigned";
-
-        _context.SaveChanges();
-
-        return Ok(req);
-    }
-
-    [HttpGet("assigned/{type}")]
+    [HttpGet("assigned")]
     [Authorize(Roles = "Manager")]
-    public IActionResult GetAssigned(string type)
+    public IActionResult GetAssigned()
     {
+        var managerId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
         var data = _context.CustomerRequirements
-            .Where(r => r.AssignedTo == type)
+            .Where(r => r.ManagerId == managerId)
             .ToList();
 
         return Ok(data);
@@ -197,6 +181,36 @@ public class CustomerRequirementsController : ControllerBase
         return Ok(new
         {
             message = $"Pushed to {employees.Count} employees"
+        });
+    }
+    [HttpPut("assign")]
+    [Authorize(Roles = "SeniorManager")]
+    public IActionResult AssignRequirement([FromBody] AssignDTO dto)
+    {
+        var req = _context.CustomerRequirements.Find(dto.RequirementId);
+
+        if (req == null)
+            return NotFound("Requirement not found");
+
+        // 🔥 prevent multiple push
+        if (req.Status == "Assigned")
+            return BadRequest("Already assigned");
+
+        var manager = _context.Managers.Find(dto.ManagerId);
+
+        if (manager == null)
+            return NotFound("Manager not found");
+
+        // 🔥 assign to specific manager
+        req.ManagerId = manager.Id;
+        req.AssignedTo = manager.Name; // or manager.ManagerType
+        req.Status = "Assigned";
+
+        _context.SaveChanges();
+
+        return Ok(new
+        {
+            message = $"Assigned to {manager.Name}"
         });
     }
 }

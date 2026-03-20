@@ -15,5 +15,7 @@
         public int CustomerId { get; set; }
 
         public string AssignedTo { get; set; } = null!;
+
+        public int? ManagerId { get; set; }   // 🔥 NEW
     }
 }

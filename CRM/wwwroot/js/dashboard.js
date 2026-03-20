@@ -52,12 +52,14 @@ async function loadRequirements() {
 <td>
 
 <button class="btn btn-success btn-sm me-1"
-onclick="pushRequirement(${r.id})">
+onclick="openAssignPopup(${r.id})"
+${r.status !== 'Pending' ? 'disabled' : ''}>
 Push
 </button>
 
-<button class="btn btn-danger btn-sm"
-onclick="deleteRequirement(${r.id})">
+<button class="btn btn-danger btn-sm me-1"
+onclick="deleteRequirement(${r.id})"
+${r.status !== 'Pending' ? 'disabled' : ''}>
 Reject
 </button>
 
@@ -204,30 +206,7 @@ async function deleteRequirement(id) {
 
 }
 
-async function pushRequirement(id) {
 
-    if (!confirm("Push this requirement to manager?")) return;
-
-    const res = await fetch(API + "/api/customerrequirements/push/" + id, {
-        method: "PUT",
-        headers: {
-            "Authorization": "Bearer " + token
-        }
-    });
-
-    if (res.ok) {
-
-        showToast("Requirement pushed to manager");
-
-        loadRequirements(); // refresh table
-
-    } else {
-
-        showToast("Push failed", "error");
-
-    }
-
-}
 
 
 /* FILTER */
@@ -443,6 +422,72 @@ function cancelEdit() {
     document.getElementById("addManagerCard").style.display = "block";
 }
 
+let selectedRequirementId = null;
+
+async function openAssignPopup(reqId) {
+
+    selectedRequirementId = reqId;
+
+    // 🔥 Ensure managers are loaded
+    if (managers.length === 0) {
+        await loadManagers();
+    }
+
+    let dropdown = document.getElementById("assignManagerSelect");
+    dropdown.innerHTML = "";
+
+    managers.forEach(m => {
+        dropdown.innerHTML += `
+            <option value="${m.id}">
+                ${m.name} (${m.managerType})
+            </option>
+        `;
+    });
+
+    document.getElementById("assignPopup").style.display = "flex";
+}
+
+function closeAssignPopup() {
+    document.getElementById("assignPopup").style.display = "none";
+}
+
+async function assignToManager() {
+
+    const managerId = document.getElementById("assignManagerSelect").value;
+
+    if (!managerId) {
+        showToast("Select a manager", "error");
+        return;
+    }
+
+    const res = await fetch(API + "/api/customerrequirements/assign", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({
+            requirementId: selectedRequirementId,
+            managerId: managerId
+        })
+    });
+
+    if (res.ok) {
+
+        showToast("Requirement assigned to manager");
+
+        // 🔥 Disable push button instantly
+        const row = document.getElementById("req-" + selectedRequirementId);
+        const btn = row.querySelector(".btn-success");
+        btn.disabled = true;
+        btn.innerText = "Assigned";
+        closeAssignPopup();
+        loadRequirements();
+
+    } else {
+        showToast("Assignment failed", "error");
+    }
+}
 
 
 /* LOGOUT */

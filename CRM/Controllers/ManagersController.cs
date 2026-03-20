@@ -3,6 +3,7 @@ using CRM.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using BCrypt.Net;
+using CRM.DTOs;
 
 namespace CRM.Controllers
 {
@@ -110,6 +111,37 @@ namespace CRM.Controllers
             _context.SaveChanges();
 
             return Ok(new { status = manager.Status });
+        }
+
+        [HttpPut("assign")]
+        [Authorize(Roles = "SeniorManager")]
+        public IActionResult AssignRequirement([FromBody] AssignDTO dto)
+        {
+            var req = _context.CustomerRequirements.Find(dto.RequirementId);
+
+            if (req == null)
+                return NotFound("Requirement not found");
+
+            // 🔥 PREVENT MULTIPLE PUSH
+            if (req.Status == "Assigned")
+                return BadRequest("Already assigned");
+
+            var manager = _context.Managers.Find(dto.ManagerId);
+
+            if (manager == null)
+                return NotFound("Manager not found");
+
+            // 🔥 ASSIGN TO SPECIFIC MANAGER
+            req.ManagerId = manager.Id;
+            req.AssignedTo = manager.Name; // or keep type if you want
+            req.Status = "Assigned";
+
+            _context.SaveChanges();
+
+            return Ok(new
+            {
+                message = $"Assigned to {manager.Name}"
+            });
         }
     }
 }

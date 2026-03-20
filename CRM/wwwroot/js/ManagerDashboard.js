@@ -283,7 +283,7 @@ async function loadRequirements() {
 
     const managerType = user.managerType;
 
-    const res = await fetch(API + "/api/customerrequirements/assigned/" + managerType, {
+    const res = await fetch(API + "/api/customerrequirements/assigned", {
         headers: { "Authorization": "Bearer " + token }
     });
 
@@ -413,12 +413,12 @@ async function loadEmployees() {
     }
 
     renderTable(employees);
-    updateStats();
+   // updateStats();
 }
 
 
 /* UPDATE STATS */
-
+/*
 function updateStats() {
 
     document.getElementById("totalEmployees").innerText = employees.length
@@ -439,6 +439,7 @@ function updateStats() {
     document.getElementById("nonItEmployees").innerText = nonit
 
 }
+*/
 
 
 /* RENDER TABLE */
