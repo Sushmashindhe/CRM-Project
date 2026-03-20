@@ -202,6 +202,39 @@ ${m.name} (${m.managerType})
 function closeAssignPopup() {
     document.getElementById("assignPopup").style.display = "none";
 }
+//Apply Filters
+function applyFilters() {
+
+    let search = document.getElementById("searchInput").value.toLowerCase()
+    let type = document.getElementById("filterType").value
+    let status = document.getElementById("filterStatus").value
+
+    let filtered = managers.filter(m => {
+
+        let matchesSearch =
+            m.name.toLowerCase().includes(search) ||
+            m.email.toLowerCase().includes(search)
+
+        let matchesType =
+            !type || m.managerType === type
+
+        let matchesStatus =
+            !status || m.status === status
+
+        return matchesSearch && matchesType && matchesStatus
+    })
+
+    renderTable(filtered)
+}
+//clear filters
+function clearFilters() {
+
+    document.getElementById("searchInput").value = ""
+    document.getElementById("filterType").value = ""
+
+    renderTable(managers)
+
+}
 
 /* ================= ASSIGN TO MANAGER ================= */
 
@@ -243,6 +276,142 @@ async function assignToManager() {
         showToast("Assignment failed", "error");
     }
 }
+//save manager
+async function saveManager() {
+
+    let manager = {}
+    let url = API + "/api/managers"
+    let method = "POST"
+
+    // 👉 ADD MODE
+    if (editManagerId === null) {
+
+        const name = document.getElementById("mname").value.trim()
+        const email = document.getElementById("memail").value.trim()
+        const password = document.getElementById("mpassword").value.trim()
+        const managerType = document.getElementById("mtype").value
+        const placeOfBirth = document.getElementById("mpob").value.trim()
+        const phone = document.getElementById("mphone").value.trim()
+
+        // ✅ PASSWORD REGEX
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/
+
+        // ✅ PHONE REGEX (10 digits)
+        const phoneRegex = /^[0-9]{10}$/
+
+
+        if (!name || !email || !password || !managerType || !phone) {
+            showToast("Please fill required fields", "error")
+            return
+        }
+
+        if (!passwordRegex.test(password)) {
+            showToast("Password must be 8+ chars with upper, lower, number & special char", "error")
+            return
+        }
+
+        // 📱 PHONE VALIDATION
+        if (!phoneRegex.test(phone)) {
+            showToast("Phone must be exactly 10 digits", "error")
+            return
+        }
+
+        manager = { name, email, password, managerType, placeOfBirth, phone }
+    }
+
+    // 👉 EDIT MODE
+    else {
+
+        const name = document.getElementById("edit_name").value.trim()
+        const email = document.getElementById("edit_email").value.trim()
+        const managerType = document.getElementById("edit_type").value
+        const placeOfBirth = document.getElementById("edit_pob").value.trim()
+        const phone = document.getElementById("edit_phone").value.trim()
+
+        if (!name || !email || !managerType || !phone) {
+            showToast("Please fill required fields", "error")
+            return
+        }
+
+        manager = {
+            Name: name,
+            Email: email,
+            ManagerType: managerType,
+            PlaceOfBirth: placeOfBirth,
+            Phone: phone
+        }
+
+        url = API + "/api/managers/" + editManagerId
+        method = "PUT"
+    }
+
+    const res = await fetch(url, {
+        method,
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify(manager)
+    })
+
+    if (!res.ok) {
+        showToast("Operation failed", "error")
+        return
+    }
+
+    showToast(editManagerId ? "Manager updated" : "Manager added")
+
+    showToast(editManagerId ? "Manager updated" : "Manager added")
+
+    // ✅ CLEAR FORM AFTER ADD
+    clearForm()
+
+    cancelEdit()   // switch back to add form
+    loadManagers()
+}
+//clearform
+function clearForm() {
+    editManagerId = null;
+
+    document.getElementById("mname").value = "";
+    document.getElementById("memail").value = "";
+    document.getElementById("mpassword").value = "";
+    document.getElementById("mtype").value = "";
+    document.getElementById("mpob").value = "";
+    document.getElementById("mphone").value = "";
+
+    // Show password field when adding new manager
+    document.getElementById("passwordFieldContainer").style.display = "block";
+}
+//cancel edit
+function cancelEdit() {
+    editManagerId = null;
+
+    document.getElementById("editManagerCard").style.display = "none";
+    document.getElementById("addManagerCard").style.display = "block";
+}
+
+
+//Edit Manager
+function editManager(id, name, email, type, placeOfBirth = "", phone = "") {
+    editManagerId = id;
+
+    // Hide Add form
+    document.getElementById("addManagerCard").style.display = "none";
+
+    // Show Edit form
+    document.getElementById("editManagerCard").style.display = "block";
+
+    // Fill values
+    document.getElementById("edit_name").value = name;
+    document.getElementById("edit_email").value = email;
+    document.getElementById("edit_type").value = type;
+    document.getElementById("edit_pob").value = placeOfBirth;
+    document.getElementById("edit_phone").value = phone;
+
+    document.getElementById("editManagerCard").scrollIntoView({ behavior: "smooth" });
+}
+
 
 /* ================= DELETE MANAGER ================= */
 
