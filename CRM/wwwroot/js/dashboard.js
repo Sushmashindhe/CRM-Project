@@ -304,6 +304,14 @@ async function saveManager() {
             showToast("Please fill required fields", "error")
             return
         }
+        let emailExists = managers.some(m =>
+            m.email.toLowerCase() === email.toLowerCase()
+        );
+
+        if (emailExists) {
+            showToast("Email already exists", "error");
+            return;
+        }
 
         if (!passwordRegex.test(password)) {
             showToast("Password must be 8+ chars with upper, lower, number & special char", "error")
