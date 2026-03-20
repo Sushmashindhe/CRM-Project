@@ -17,5 +17,9 @@
         public string AssignedTo { get; set; } = null!;
 
         public int? ManagerId { get; set; }   // 🔥 NEW
+
+        public int? EmployeeId { get; set; }   // assign to specific employee
+
+        public bool IsAssigned { get; set; } = false; // prevent reassign
     }
 }

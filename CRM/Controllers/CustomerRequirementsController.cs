@@ -212,4 +212,49 @@ public class CustomerRequirementsController : ControllerBase
             message = $"Pushed to {employees.Count} employees"
         });
     }
+    [HttpPost("assign")]
+    [Authorize(Roles = "Manager")]
+    public IActionResult AssignRequirement([FromBody] AssignRequest request)
+    {
+        var req = _context.CustomerRequirements.Find(request.RequirementId);
+
+        if (req == null)
+            return NotFound("Requirement not found");
+
+        // 🚫 Prevent duplicate assignment
+        if (req.IsAssigned)
+            return BadRequest("Requirement already assigned");
+
+        var emp = _context.Employees.Find(request.EmployeeId);
+
+        if (emp == null)
+            return NotFound("Employee not found");
+
+        // ✅ Assign to specific employee
+        req.EmployeeId = emp.Id;
+        req.AssignedTo = emp.Name;
+        req.IsAssigned = true;
+        req.Status = "Assigned";
+
+        _context.SaveChanges();
+
+        return Ok(new { message = "Assigned successfully" });
+    }
+    [HttpGet("employee")]
+    [Authorize(Roles = "Employee")]
+    public IActionResult GetEmployeeRequirements()
+    {
+        var empClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+
+        if (empClaim == null)
+            return Unauthorized();
+
+        int empId = int.Parse(empClaim.Value);
+
+        var data = _context.CustomerRequirements
+            .Where(r => r.EmployeeId == empId)
+            .ToList();
+
+        return Ok(data);
+    }
 }

@@ -182,7 +182,7 @@ function loadTypes() {
 
 let employeeId = null
 let employees = []
-
+let selectedRequirementId = null;
 
 async function saveEmployee() {
 
@@ -303,18 +303,25 @@ async function loadRequirements() {
 <td>${r.title}</td>
 <td>${r.description}</td>
 <td>${r.category}</td>
+
+<td>${r.assignedTo || "Not Assigned"}</td>
+
 <td>
 <button class="btn btn-sm ${r.status === 'Completed' ? 'btn-success' : 'btn-warning'}"
     onclick="toggleStatus(${r.id}, '${r.status}')">
     ${r.status}
 </button>
+</td>
 
-<button class="btn btn-sm btn-primary ms-1"
-    onclick="pushRequirement(${r.id}, '${r.category}')">
-    Push
+<td>
+<button class="btn btn-sm btn-primary"
+    ${r.isAssigned ? "disabled" : ""}
+    onclick="openAssignModal(${r.id}, '${r.category}')">
+    ${r.isAssigned ? "Assigned" : "Assign"}
 </button>
 </td>
-</tr>`;
+</tr>
+`;
     });
 
     document.getElementById("requirementsTable").innerHTML = html;
@@ -370,6 +377,57 @@ async function pushRequirement(reqId) {
     alert(data.message);
 }
 
+function openAssignModal(reqId, category) {
+
+    selectedRequirementId = reqId;
+
+    const dropdown = document.getElementById("employeeSelect");
+
+    // 🔹 Filter employees by category
+    let filtered = employees.filter(e => {
+        if (category === "IT") {
+            return ["Developer", "QA", "DevOps"].includes(e.employeeType);
+        } else {
+            return ["HR Services", "Finance", "Sales"].includes(e.employeeType);
+        }
+    });
+
+    dropdown.innerHTML = filtered.map(e =>
+        `<option value="${e.id}">${e.name} (${e.employeeType})</option>`
+    ).join("");
+
+    const modal = new bootstrap.Modal(document.getElementById('assignEmployeeModal'));
+    modal.show();
+}
+
+async function confirmAssign() {
+
+    const empId = document.getElementById("employeeSelect").value;
+
+    const res = await fetch(API + "/api/customerrequirements/assign", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({
+            requirementId: selectedRequirementId,
+            employeeId: parseInt(empId)
+        })
+    });
+
+    if (!res.ok) {
+        const err = await res.text();
+        alert(err);
+        return;
+    }
+
+    alert("Assigned successfully");
+
+    bootstrap.Modal.getInstance(document.getElementById('assignEmployeeModal')).hide();
+
+    loadRequirements();
+}
 
 /* LOAD EMPLOYEES */
 

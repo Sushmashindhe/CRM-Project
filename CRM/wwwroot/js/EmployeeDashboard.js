@@ -207,9 +207,7 @@ loadEmployeeUpdates();
 
 function loadAssignedRequirements() {
 
-    const user = JSON.parse(localStorage.getItem("user"));
-
-    fetch(API + "/api/emp/employee/" + user.id, {
+    fetch(API + "/api/customerrequirements/employee", {
         headers: {
             "Authorization": "Bearer " + token
         }
@@ -231,6 +229,9 @@ function loadAssignedRequirements() {
 </td>
 </tr>`;
             });
+        })
+        .catch(err => {
+            console.error("Error loading assigned requirements:", err);
         });
 }
 loadAssignedRequirements();
