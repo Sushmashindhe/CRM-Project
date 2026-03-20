@@ -16,15 +16,14 @@ public class CustomerRequirementsController : ControllerBase
         _context = context;
     }
 
-    // CUSTOMER SEND REQUIREMENT
+    // ---------------- CUSTOMER SEND REQUIREMENT ----------------
     [HttpPost]
     public IActionResult SendRequirement([FromBody] CustomerRequirement req)
     {
         if (req == null)
             return BadRequest("Requirement data missing");
 
-        req.Status = "Pending"; // Set default status here
-
+        req.Status = "Pending";
         req.AssignedTo = "Not Assigned";
 
         _context.CustomerRequirements.Add(req);
@@ -33,7 +32,7 @@ public class CustomerRequirementsController : ControllerBase
         return Ok(req);
     }
 
-    // CUSTOMER SEE THEIR REQUIREMENTS
+    // ---------------- CUSTOMER SEE THEIR REQUIREMENTS ----------------
     [HttpGet("my/{customerId}")]
     public IActionResult GetMyRequirements(int customerId)
     {
@@ -44,24 +43,23 @@ public class CustomerRequirementsController : ControllerBase
         return Ok(data);
     }
 
+    // ---------------- SENIOR MANAGER GET ALL ----------------
     [HttpGet]
     [Authorize(Roles = "SeniorManager")]
     public IActionResult GetAllRequirements()
     {
         var data = _context.CustomerRequirements.ToList();
-
         return Ok(data);
     }
 
+    // ---------------- DELETE REQUIREMENT ----------------
     [HttpDelete("requirement/{id}")]
     public IActionResult DeleteRequirement(int id)
     {
         var req = _context.CustomerRequirements.Find(id);
 
         if (req == null)
-        {
             return NotFound("Requirement not found");
-        }
 
         _context.CustomerRequirements.Remove(req);
         _context.SaveChanges();
@@ -69,8 +67,38 @@ public class CustomerRequirementsController : ControllerBase
         return Ok("Requirement deleted successfully");
     }
 
+    // ---------------- ASSIGN TO MANAGER ----------------
+    [HttpPut("assign")]
+    [Authorize(Roles = "SeniorManager")]
+    public IActionResult AssignRequirement([FromBody] AssignDTO dto)
+    {
+        var req = _context.CustomerRequirements.Find(dto.RequirementId);
 
+        if (req == null)
+            return NotFound("Requirement not found");
 
+        // prevent re-assign
+        if (req.ManagerId != null)
+            return BadRequest("Already assigned");
+
+        var manager = _context.Managers.Find(dto.ManagerId);
+
+        if (manager == null)
+            return NotFound("Manager not found");
+
+        req.ManagerId = manager.Id;
+        req.AssignedTo = manager.Name;
+        req.Status = "Assigned";
+
+        _context.SaveChanges();
+
+        return Ok(new
+        {
+            message = $"Assigned to {manager.Name}"
+        });
+    }
+
+    // ---------------- MANAGER GET ASSIGNED REQUIREMENTS ----------------
     [HttpGet("assigned")]
     [Authorize(Roles = "Manager")]
     public IActionResult GetAssigned()
@@ -84,6 +112,7 @@ public class CustomerRequirementsController : ControllerBase
         return Ok(data);
     }
 
+    // ---------------- UPDATE STATUS ----------------
     [HttpPut("status/{id}")]
     public IActionResult UpdateStatus(int id, [FromBody] StatusDTO dto)
     {
@@ -99,6 +128,7 @@ public class CustomerRequirementsController : ControllerBase
         return Ok(req);
     }
 
+    // ---------------- STATS ----------------
     [HttpGet("stats")]
     public IActionResult GetStats()
     {
@@ -114,12 +144,14 @@ public class CustomerRequirementsController : ControllerBase
         return Ok(stats);
     }
 
+    // ---------------- EMPLOYEE COUNT ----------------
     [HttpGet("employee-count")]
     public IActionResult GetEmployeeCount()
     {
         return Ok(_context.Employees.Count());
     }
 
+    // ---------------- PUSH TO EMPLOYEES ----------------
     [HttpPost("push-to-employees/{id}")]
     [Authorize(Roles = "Manager")]
     public IActionResult PushToEmployees(int id)
@@ -129,9 +161,7 @@ public class CustomerRequirementsController : ControllerBase
         if (req == null)
             return NotFound("Requirement not found");
 
-        // Get manager from token
         var managerId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-
         var manager = _context.Managers.Find(managerId);
 
         if (manager == null)
@@ -139,7 +169,7 @@ public class CustomerRequirementsController : ControllerBase
 
         List<Employees> employees;
 
-        // 🔥 FILTER BASED ON MANAGER TYPE
+        // FILTER BASED ON MANAGER TYPE
         if (manager.ManagerType == "IT")
         {
             employees = _context.Employees
@@ -157,7 +187,6 @@ public class CustomerRequirementsController : ControllerBase
                 .ToList();
         }
 
-        // 🔥 ASSIGN TO EACH EMPLOYEE
         foreach (var emp in employees)
         {
             bool exists = _context.RequirementAssignments
@@ -181,36 +210,6 @@ public class CustomerRequirementsController : ControllerBase
         return Ok(new
         {
             message = $"Pushed to {employees.Count} employees"
-        });
-    }
-    [HttpPut("assign")]
-    [Authorize(Roles = "SeniorManager")]
-    public IActionResult AssignRequirement([FromBody] AssignDTO dto)
-    {
-        var req = _context.CustomerRequirements.Find(dto.RequirementId);
-
-        if (req == null)
-            return NotFound("Requirement not found");
-
-        // 🔥 prevent multiple push
-        if (req.Status == "Assigned")
-            return BadRequest("Already assigned");
-
-        var manager = _context.Managers.Find(dto.ManagerId);
-
-        if (manager == null)
-            return NotFound("Manager not found");
-
-        // 🔥 assign to specific manager
-        req.ManagerId = manager.Id;
-        req.AssignedTo = manager.Name; // or manager.ManagerType
-        req.Status = "Assigned";
-
-        _context.SaveChanges();
-
-        return Ok(new
-        {
-            message = $"Assigned to {manager.Name}"
         });
     }
 }
