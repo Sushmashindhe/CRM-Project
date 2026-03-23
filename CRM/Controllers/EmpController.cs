@@ -155,16 +155,23 @@ namespace CRM.Controllers
         [HttpGet("employee-types")]
         public IActionResult EmployeeTypes()
         {
-            var data = _context.Employees
-                .GroupBy(e => e.EmployeeType.Trim().ToLower())
-                .Select(g => new
-                {
-                    role = g.Key,
-                    count = g.Count()
-                })
-                .ToList();
+            try
+            {
+                var data = _context.Employees
+                    .GroupBy(e => (e.EmployeeType ?? "Unknown").Trim().ToLower())
+                    .Select(g => new
+                    {
+                        role = g.Key,
+                        count = g.Count()
+                    })
+                    .ToList();
 
-            return Ok(data);
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
     }
 }

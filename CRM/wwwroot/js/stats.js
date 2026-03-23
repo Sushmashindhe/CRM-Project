@@ -9,11 +9,25 @@ function goBack() {
 let totalReqChart, totalChart, empManagerChart, roleChart;
 
 async function loadTotalsNumbers() {
+
     const managerRes = await fetch("https://localhost:7192/api/employees/total-managers");
     const employeeRes = await fetch("https://localhost:7192/api/emp/total-employees");
 
-    document.getElementById("totalManagers").innerText = await managerRes.json();
-    document.getElementById("totalEmployees").innerText = await employeeRes.json();
+    if (!managerRes.ok) {
+        console.error("Manager API Error:", await managerRes.text());
+        return;
+    }
+
+    if (!employeeRes.ok) {
+        console.error("Employee API Error:", await employeeRes.text());
+        return;
+    }
+
+    const mgrData = await managerRes.json();
+    const empData = await employeeRes.json();
+
+    document.getElementById("totalManagers").innerText = mgrData;
+    document.getElementById("totalEmployees").innerText = empData;
 }
 
 async function loadRequirementsPie() {
@@ -72,7 +86,15 @@ async function loadEmpPerManager() {
 }
 
 async function loadEmployeeTypes() {
+
     const res = await fetch("https://localhost:7192/api/emp/employee-types");
+
+    if (!res.ok) {
+        const text = await res.text();
+        console.error("Employee Types API Error:", text);
+        return;
+    }
+
     const data = await res.json();
 
     if (roleChart) roleChart.destroy();
@@ -106,4 +128,6 @@ function loadAll() {
     loadEmpPerManager();
 }
 
-loadAll();
+window.onload = function() {
+    loadAll();
+};

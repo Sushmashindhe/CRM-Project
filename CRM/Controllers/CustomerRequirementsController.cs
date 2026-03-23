@@ -48,7 +48,26 @@ public class CustomerRequirementsController : ControllerBase
     [Authorize(Roles = "SeniorManager")]
     public IActionResult GetAllRequirements()
     {
-        var data = _context.CustomerRequirements.ToList();
+        var data = _context.CustomerRequirements
+            .Select(r => new
+            {
+                r.Id,
+                r.CustomerId,
+
+                // 👇 ADD THIS LINE
+                CustomerName = _context.Customers
+                    .Where(c => c.Id == r.CustomerId)
+                    .Select(c => c.Name)
+                    .FirstOrDefault(),
+
+                r.Title,
+                r.Description,
+                r.Category,
+                r.Status,
+                r.AssignedTo
+            })
+            .ToList();
+
         return Ok(data);
     }
 
