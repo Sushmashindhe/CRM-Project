@@ -1,115 +1,56 @@
-﻿/* GLOBAL */
-
-body {
-    background: linear-gradient(120deg, #eef2ff, #f8fafc);
-    font-family: "Segoe UI", Tahoma, sans-serif;
-    margin: 0;
-    padding: 0;
+﻿body {
+    background: linear-gradient(120deg,#eef2ff,#f8fafc);
+    font-family: Segoe UI;
 }
-
-    /* CONTAINER WIDTH FIX */
-
-    body.container {
-        max-width: 1400px; /* 🔥 increase width */
-    }
 
 /* HEADER */
 
 .header {
-    background: linear-gradient(135deg, #4338ca, #6366f1);
+    background: linear-gradient(135deg,#4f46e5,#6366f1);
     color: white;
-    padding: 22px 28px;
-    border-radius: 14px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
 }
 
 /* CARDS */
 
 .card {
     border: none;
-    border-radius: 16px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-    transition: all 0.25s ease;
-    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    transition: 0.3s;
 }
 
     .card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+        transform: translateY(-3px);
     }
 
-/* FORM INPUTS */
+/* STAT CARDS */
 
-input, select {
-    border-radius: 8px !important;
-    padding: 10px !important;
-    border: 1px solid #d1d5db !important;
+.stat-card {
+    padding: 20px;
+    color: white;
+    border-radius: 12px;
 }
 
-    input:focus, select:focus {
-        border-color: #6366f1 !important;
-        box-shadow: 0 0 0 2px rgba(99,102,241,0.2) !important;
-    }
-
-/* BUTTONS */
-
-.btn {
-    border-radius: 8px;
-    font-weight: 500;
+.stat1 {
+    background: linear-gradient(135deg,#3b82f6,#2563eb);
 }
 
-.btn-success {
-    background: #10b981;
-    border: none;
+.stat2 {
+    background: linear-gradient(135deg,#10b981,#059669);
 }
 
-    .btn-success:hover {
-        background: #059669;
-    }
-
-.btn-warning {
-    background: #f59e0b;
-    border: none;
-}
-
-.btn-danger {
-    background: #ef4444;
-    border: none;
+.stat3 {
+    background: linear-gradient(135deg,#f59e0b,#d97706);
 }
 
 /* TABLE */
 
-.table {
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-    .table th {
-        background: linear-gradient(135deg, #4f46e5, #6366f1);
-        color: white;
-        text-align: center;
-    }
-
-    .table td {
-        vertical-align: middle;
-    }
-
-    .table tr:hover {
-        background: #f1f5f9;
-    }
-
-/* SEARCH CARD */
-
-.card.p-3 {
-    border-left: 5px solid #6366f1;
-}
-
-/* MODAL */
-
-.modal-content {
-    border-radius: 14px;
-    border: none;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+.table th {
+    background: #4f46e5;
+    color: white;
 }
 
 /* UNAUTHORIZED SCREEN */
@@ -120,7 +61,7 @@ input, select {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255,255,255,0.95);
+    background: white;
     display: none;
     align-items: center;
     justify-content: center;
@@ -129,26 +70,13 @@ input, select {
 
 .message-box {
     text-align: center;
-    padding: 45px;
-    border-radius: 14px;
-    box-shadow: 0 12px 35px rgba(0,0,0,0.2);
-    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
 }
 
     .message-box i {
-        font-size: 65px;
+        font-size: 60px;
         color: #dc3545;
         margin-bottom: 15px;
     }
-
-/* TOAST */
-
-.toast {
-    border-radius: 10px;
-}
-
-/* SMALL ENHANCEMENT */
-
-h3, h5 {
-    font-weight: 600;
-}

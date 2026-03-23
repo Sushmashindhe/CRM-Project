@@ -300,7 +300,7 @@ async function saveManager() {
         const phoneRegex = /^[0-9]{10}$/
 
         if (!email.includes("@")) {
-            showToast("Email must contain @ symbol");
+            showToast("Email must contain @ symbol","error");
             return;
         }
 
