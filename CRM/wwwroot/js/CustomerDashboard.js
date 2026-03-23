@@ -118,5 +118,5 @@ async function loadRequirements(customerId) {
 // ✅ LOGOUT
 function logout() {
     localStorage.removeItem("user");
-    window.location.href = "CustomerLogin.html";
+    window.location.href = "login.html";
 }
