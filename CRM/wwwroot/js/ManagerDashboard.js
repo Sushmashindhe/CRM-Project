@@ -40,6 +40,8 @@ function fillManagerEdit() {
     document.getElementById("editEmail").value = user.email || ""
     document.getElementById("editPhone").value = user.phone ? user.phone : ""
 
+   
+
 }
 
 /* PASSWORD VALIDATION */
@@ -133,14 +135,25 @@ async function updateManager() {
         user.phone = phone;
         localStorage.setItem("user", JSON.stringify(user));
 
+
         //loadManager();
         showToast("Manager updated successfully", "success");
+
+        alert("Manager updated successfully");
+
     } catch (err) {
         console.error(err);
         showToast("Error updating manager", "error");
     }
+
     clearForm()
     loadManager();
+
+
+    clearForm()
+    loadManager();
+
+>>>>>>> 858c5b1ade0282bfa68c2c315ba07cf345c0d7cb
 }
 
 
@@ -492,6 +505,12 @@ async function loadEmployees() {
 
     renderTable(employees);
    // updateStats();
+}
+
+function clearForm() {
+    document.getElementById("editName").value = "";
+    document.getElementById("editEmail").value = "";
+    document.getElementById("editPhone").value = "";
 }
 
 
