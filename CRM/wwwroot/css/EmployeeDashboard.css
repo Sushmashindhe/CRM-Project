@@ -1,56 +1,87 @@
-﻿
-body {
-    background: linear-gradient(120deg,#eef2ff,#f8fafc);
-    font-family: Segoe UI;
+﻿/* GLOBAL */
+
+:root {
+    --primary: #1d3557;
+    --primary-soft: #457b9d;
+    --bg: #f4f6f9;
+    --text: #1f2937;
+    --card-bg: #ffffff;
 }
 
-/* HEADER */
+body {
+    background: linear-gradient(120deg, #eef2ff, var(--bg));
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: var(--text);
+    margin: 0;
+}
+
+/* HEADER (kept same colors, refined look) */
 
 .header {
-    background: linear-gradient(135deg,#1d3557,#457b9d);
+    background: linear-gradient(135deg, #1d3557, #457b9d);
     color: white;
     padding: 20px;
     border-radius: 12px;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 20px rgba(29, 53, 87, 0.25);
+    font-weight: 500;
+    letter-spacing: 0.4px;
 }
 
-/* CARDS */
+/* CARDS (more premium + softer like senior/manager dashboards) */
 
 .card {
-    border: none;
+    background: var(--card-bg);
+    border: 1px solid #e5e7eb;
     border-radius: 14px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-    transition: 0.3s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    transition: all 0.25s ease;
 }
 
     .card:hover {
-        transform: translateY(-3px);
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     }
 
-/* UNAUTHORIZED */
+/* UNAUTHORIZED SCREEN (modern glass effect) */
 
 .unauthorized-screen {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: white;
+    inset: 0;
+    background: rgba(244, 246, 249, 0.9);
+    backdrop-filter: blur(6px);
     display: none;
     align-items: center;
     justify-content: center;
     z-index: 99999;
 }
 
+/* MESSAGE BOX (clean + premium) */
+
 .message-box {
     text-align: center;
     padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    border-radius: 14px;
+    background: white;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+    animation: fadeIn 0.3s ease;
 }
 
     .message-box i {
         font-size: 60px;
-        color: #dc3545;
+        color: #e5533d;
         margin-bottom: 15px;
     }
+
+/* ANIMATION (subtle like modern dashboards) */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
