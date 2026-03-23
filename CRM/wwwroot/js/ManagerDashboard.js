@@ -192,19 +192,33 @@ async function saveEmployee() {
     const phone = document.getElementById("ephone").value.trim()
     const pob = document.getElementById("epob").value.trim();
     const type = document.getElementById("etype").value
-
-
-
+   
+    // ✅ STRONG EMAIL VALIDATION (recommended)
+   
     if (!name || !email || !password || !phone || !pob || !type) {
-
-        alert("Please fill all fields")
-        return
-
+        showToast("Please fill all fields", "error");
+        return;
+    }
+    if (!email.includes("@")) {
+        showToast("Email must contain @ symbol");
+        return;
     }
 
+    // ✅ Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email)) {
+        showToast("Enter a valid email address", "error");
+        return;
+    }
+
+    // ✅ Phone validation
     if (phone.length !== 10) {
-        return; // silently block
+        showToast("Phone must be 10 digits", "error");
+        return;
     }
+
+  
 
 
 
@@ -254,7 +268,7 @@ async function saveEmployee() {
 
     if (!res.ok) {
         const err = await res.text();
-        alert("Failed to save employee: " + err);
+        showToast("Failed to save employee", "error");
         return;
     }
 
@@ -718,6 +732,23 @@ Give Feedback
         });
 }
 loadUpdates();
+function showToast(message, type = "success") {
+
+    const toastElement = document.getElementById("liveToast");
+    const toastMessage = document.getElementById("toastMessage");
+
+    toastMessage.innerText = message;
+
+    toastElement.className = "toast align-items-center border-0";
+
+    if (type === "success")
+        toastElement.classList.add("text-bg-success");
+    else
+        toastElement.classList.add("text-bg-danger");
+
+    const toast = new bootstrap.Toast(toastElement);
+    toast.show();
+}
 
 function sendFeedback(updateId) {
 

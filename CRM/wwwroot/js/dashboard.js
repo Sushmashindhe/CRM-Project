@@ -299,7 +299,18 @@ async function saveManager() {
         // ✅ PHONE REGEX (10 digits)
         const phoneRegex = /^[0-9]{10}$/
 
+        if (!email.includes("@")) {
+            showToast("Email must contain @ symbol");
+            return;
+        }
 
+        // Optional: stronger validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(email)) {
+            showToast("Enter a valid email address");
+            return;
+        }
         if (!name || !email || !password || !managerType || !phone) {
             showToast("Please fill required fields", "error")
             return

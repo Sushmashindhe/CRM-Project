@@ -14,6 +14,12 @@
     successMsg.style.display = "none";
     failMsg.style.display = "none";
     passwordError.style.display = "none";
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailPattern.test(email)) {
+        emailError.style.display = "block";
+        return;
+    }
 
     const phonePattern = /^\d{10}$/;
 
