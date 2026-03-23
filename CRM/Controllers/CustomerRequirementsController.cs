@@ -125,7 +125,23 @@ public class CustomerRequirementsController : ControllerBase
         var managerId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
         var data = _context.CustomerRequirements
-            .Where(r => r.ManagerId == managerId)
+            .Select(r => new
+            {
+                r.Id,
+                r.CustomerId,
+
+                // 👇 ADD THIS LINE
+                CustomerName = _context.Customers
+                    .Where(c => c.Id == r.CustomerId)
+                    .Select(c => c.Name)
+                    .FirstOrDefault(),
+
+                r.Title,
+                r.Description,
+                r.Category,
+                r.Status,
+                r.AssignedTo
+            })
             .ToList();
 
         return Ok(data);
