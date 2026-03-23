@@ -95,7 +95,7 @@ async function updateManager() {
 
     // 🔹 Validate required fields
     if (!name || !email || !phone) {
-        alert("Please fill all fields, including phone.");
+        showToast("Please fill all fields, including phone.", "error");
         return;
     }
 
@@ -123,7 +123,7 @@ async function updateManager() {
 
         if (!res.ok) {
             const errorText = await res.text();
-            alert("Update failed: " + errorText);
+            showToast("Update failed: " + errorText, "error");
             return;
         }
 
@@ -134,10 +134,10 @@ async function updateManager() {
         localStorage.setItem("user", JSON.stringify(user));
 
         loadManager();
-        alert("Manager updated successfully");
+        showToast("Manager updated successfully", "success");
     } catch (err) {
         console.error(err);
-        alert("An error occurred while updating manager.");
+        showToast("Error updating manager", "error");
     }
 }
 
@@ -364,7 +364,7 @@ async function toggleStatus(id, currentStatus) {
 
     if (!res.ok) {
 
-        alert("Failed to update status")
+        showToast("Failed to update status", "error")
         return
 
     }
@@ -383,12 +383,12 @@ async function pushRequirement(reqId) {
     });
 
     if (!res.ok) {
-        alert("Push failed");
+        showToast("Push failed", "error");
         return;
     }
 
     const data = await res.json();
-    alert(data.message);
+    showToast(data.message, "success");
 }
 
 function openAssignModal(reqId, category) {
@@ -432,11 +432,11 @@ async function confirmAssign() {
 
     if (!res.ok) {
         const err = await res.text();
-        alert(err);
+        showToast(err || "Assignment failed", "error");
         return;
     }
 
-    alert("Assigned successfully");
+    showToast("Assigned successfully", "success");
 
     bootstrap.Modal.getInstance(document.getElementById('assignEmployeeModal')).hide();
 
@@ -602,7 +602,7 @@ async function toggleManagerStatus() {
 
     if (!user || !user.id) {
 
-        alert("Manager ID not found")
+        showToast("Manager ID not found", "error")
 
         return
 
@@ -624,7 +624,7 @@ async function toggleManagerStatus() {
 
         if (!res.ok) {
 
-            alert("Failed to update status")
+            showToast("Failed to update status", "error")
 
             return
 
@@ -644,7 +644,7 @@ async function toggleManagerStatus() {
 
         console.error(error)
 
-        alert("Error updating status")
+        showToast("Error updating status", "error")
 
     }
 
@@ -773,7 +773,7 @@ function sendFeedback(updateId) {
         .then(res => res.json())
         .then(() => {
 
-            alert("Feedback sent");
+            showToast("Feedback sent", "success");
             loadUpdates();
 
         });

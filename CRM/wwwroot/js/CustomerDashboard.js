@@ -7,8 +7,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const session = JSON.parse(localStorage.getItem("user"));
 
     if (!session) {
-        alert("Please login first");
-        window.location.href = "CustomerLogin.html";
+        showToast("Please login first", "error");
+
+        setTimeout(() => {
+            window.location.href = "CustomerLogin.html";
+        }, 1500);
+
         return;
     }
 
@@ -41,7 +45,7 @@ async function sendRequirement() {
     };
 
     if (!req.Title || !req.Description || !req.Category) {
-        alert("Fill all fields");
+        showToast("Fill all fields", "error");
         return;
     }
 
@@ -53,7 +57,7 @@ async function sendRequirement() {
         });
 
         if (res.ok) {
-            alert("Submitted!");
+            showToast("Requirement submitted successfully", "success");
 
             document.getElementById("title").value = "";
             document.getElementById("desc").value = "";
@@ -62,11 +66,11 @@ async function sendRequirement() {
             loadRequirements(user.id);
         } else {
             const err = await res.text();
-            alert("Error: " + err);
+            showToast("Error: " + err, "error");
         }
 
     } catch (err) {
-        alert("Server error");
+        showToast("Server error", "error");
         console.error(err);
     }
 }
@@ -109,11 +113,27 @@ async function loadRequirements(customerId) {
         document.getElementById("completedReq").innerText = completed;
 
     } catch (err) {
-        alert("Error loading data");
+        showToast("Error loading data", "error");
         console.error(err);
     }
 }
+function showToast(message, type = "success") {
 
+    const toastElement = document.getElementById("liveToast");
+    const toastMessage = document.getElementById("toastMessage");
+
+    toastMessage.innerText = message;
+
+    toastElement.className = "toast align-items-center border-0";
+
+    if (type === "success")
+        toastElement.classList.add("text-bg-success");
+    else
+        toastElement.classList.add("text-bg-danger");
+
+    const toast = new bootstrap.Toast(toastElement);
+    toast.show();
+}
 
 // ✅ LOGOUT
 function logout() {

@@ -53,7 +53,7 @@ async function loadEmployee() {
 
 async function updateEmployee() {
 
-    const phone = ephone.value.trim()
+    const phone = document.getElementById("ephone").value.trim()
 
     /* PHONE VALIDATION */
 
@@ -61,8 +61,7 @@ async function updateEmployee() {
 
     if (!phonePattern.test(phone)) {
 
-        alert("Phone number must be exactly 10 digits")
-
+        showToast("Phone number must be exactly 10 digits", "error")
         return
 
     }
@@ -93,7 +92,7 @@ async function updateEmployee() {
     if (!res.ok) {
 
         const text = await res.text()
-        alert(text)
+        showToast(text || "Update failed", "error")
         return
 
     }
@@ -102,7 +101,7 @@ async function updateEmployee() {
 
     localStorage.setItem("user", JSON.stringify(updated))
 
-    alert("Details updated successfully")
+    showToast("Details updated successfully", "success")
 
     loadEmployee()
 
@@ -132,7 +131,7 @@ function sendUpdate() {
     const user = data.user ? data.user : data;
 
     if (!user) {
-        alert("User not found. Please login again.");
+        showToast("User not found. Please login again.", "error");
         return;
     }
 
@@ -160,7 +159,7 @@ function sendUpdate() {
         })
         .then(() => {
 
-            alert("Update submitted successfully");
+            showToast("Update submitted successfully", "success");
 
             document.getElementById("projectName").value = "";
             document.getElementById("updateText").value = "";
@@ -168,7 +167,7 @@ function sendUpdate() {
         })
         .catch(err => {
             console.error(err);
-            alert("Error: " + err.message);
+            showToast("Error: " + err.message, "error");
         });
 
 }
@@ -207,7 +206,23 @@ fetch(API + "/api/projectupdates/employee", {
 }
 
 loadEmployeeUpdates();
+function showToast(message, type = "success") {
 
+    const toastElement = document.getElementById("liveToast");
+    const toastMessage = document.getElementById("toastMessage");
+
+    toastMessage.innerText = message;
+
+    toastElement.className = "toast align-items-center border-0";
+
+    if (type === "success")
+        toastElement.classList.add("text-bg-success");
+    else
+        toastElement.classList.add("text-bg-danger");
+
+    const toast = new bootstrap.Toast(toastElement);
+    toast.show();
+}
 function loadAssignedRequirements() {
 
     fetch(API + "/api/customerrequirements/employee", {
