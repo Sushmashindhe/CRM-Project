@@ -61,17 +61,17 @@ public class ProjectUpdatesController : ControllerBase
         var managerId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
         var updates = _context.ProjectUpdates
-            .Include(u => u.Employee)
-            .Where(u => u.Employee.ManagerId == managerId)
+            .Where(u => u.Employee.ManagerId == managerId) // still filter by manager
             .Select(u => new {
                 u.Id,
                 u.EmployeeId,
-                u.Employee.Name,
+                u.EmployeeName,  // directly from table
                 u.ProjectName,
                 u.UpdateText,
                 u.CreatedAt,
                 u.Feedback
             })
+            .OrderByDescending(u => u.CreatedAt)
             .ToList();
 
         return Ok(updates);

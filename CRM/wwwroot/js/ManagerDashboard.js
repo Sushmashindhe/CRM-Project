@@ -328,7 +328,7 @@ async function loadRequirements() {
         html += `
 <tr>
 <td>${r.id}</td>
-<td>${r.customerId}</td>
+<td>${r.customerName}</td>
 <td>${r.title}</td>
 <td>${r.description}</td>
 <td>${r.category}</td>
