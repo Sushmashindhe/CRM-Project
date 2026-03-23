@@ -337,17 +337,19 @@ async function loadRequirements() {
 
 <td>
 <button class="btn btn-sm ${r.status === 'Completed' ? 'btn-success' : 'btn-warning'}"
+    ${r.status === 'Completed' ? "disabled" : ""}
     onclick="toggleStatus(${r.id}, '${r.status}')">
     ${r.status}
 </button>
 </td>
 
 <td>
+${r.status === 'Completed' ? '' : `
 <button class="btn btn-sm btn-primary"
     ${r.isAssigned ? "disabled" : ""}
     onclick="openAssignModal(${r.id}, '${r.category}')">
     ${r.isAssigned ? "Assigned" : "Assign"}
-</button>
+</button>`}
 </td>
 </tr>
 `;
