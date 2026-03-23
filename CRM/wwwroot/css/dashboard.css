@@ -1,57 +1,119 @@
-﻿body {
-    background: linear-gradient(120deg,#eef2ff,#f8fafc);
-    font-family: Segoe UI;
+﻿/* GLOBAL STYLES */
+
+:root {
+    --primary: #4f46e5;
+    --primary-light: #6366f1;
+    --blue: #3b82f6;
+    --green: #10b981;
+    --orange: #f59e0b;
+    --danger: #dc3545;
+    --bg: #f8fafc;
+}
+
+body {
+    background: linear-gradient(120deg, #eef2ff, var(--bg));
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #1f2937;
 }
 
 /* HEADER */
 
 .header {
-    background: linear-gradient(135deg,#4f46e5,#6366f1);
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
     color: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    padding: 22px;
+    border-radius: 14px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    letter-spacing: 0.5px;
 }
 
 /* CARDS */
 
 .card {
     border: none;
-    border-radius: 14px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-    transition: 0.3s;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    background: white;
+    overflow: hidden;
+    position: relative;
 }
 
+    .card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 16px;
+        background: linear-gradient(transparent, rgba(0,0,0,0.03));
+        pointer-events: none;
+    }
+
     .card:hover {
-        transform: translateY(-3px);
+        transform: translateY(-6px) scale(1.01);
+        box-shadow: 0 12px 35px rgba(0,0,0,0.15);
     }
 
 /* STAT CARDS */
 
 .stat-card {
-    padding: 20px;
+    padding: 22px;
     color: white;
-    border-radius: 12px;
+    border-radius: 14px;
+    font-weight: 500;
+    position: relative;
+    overflow: hidden;
 }
 
+    .stat-card::before {
+        content: "";
+        position: absolute;
+        width: 120%;
+        height: 120%;
+        top: -20%;
+        left: -20%;
+        background: radial-gradient(circle, rgba(255,255,255,0.15), transparent);
+        transform: rotate(25deg);
+    }
+
 .stat1 {
-    background: linear-gradient(135deg,#3b82f6,#2563eb);
+    background: linear-gradient(135deg, var(--blue), #2563eb);
 }
 
 .stat2 {
-    background: linear-gradient(135deg,#10b981,#059669);
+    background: linear-gradient(135deg, var(--green), #059669);
 }
 
 .stat3 {
-    background: linear-gradient(135deg,#f59e0b,#d97706);
+    background: linear-gradient(135deg, var(--orange), #d97706);
 }
 
 /* TABLE */
 
-.table th {
-    background: #4f46e5;
-    color: white;
+.table {
+    border-radius: 12px;
+    overflow: hidden;
 }
+
+    .table th {
+        background: var(--primary);
+        color: white;
+        font-weight: 600;
+        letter-spacing: 0.4px;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+    .table tbody tr {
+        transition: background 0.2s ease;
+    }
+
+        .table tbody tr:hover {
+            background: #eef2ff;
+        }
 
 /* UNAUTHORIZED SCREEN */
 
@@ -61,22 +123,58 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: white;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(6px);
     display: none;
     align-items: center;
     justify-content: center;
     z-index: 99999;
 }
 
+/* MESSAGE BOX */
+
 .message-box {
     text-align: center;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    padding: 45px;
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+    background: white;
+    animation: fadeIn 0.4s ease;
 }
 
     .message-box i {
-        font-size: 60px;
-        color: #dc3545;
-        margin-bottom: 15px;
+        font-size: 65px;
+        color: var(--danger);
+        margin-bottom: 18px;
     }
+
+/* ANIMATIONS */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+    .header {
+        padding: 16px;
+        font-size: 14px;
+    }
+
+    .stat-card {
+        padding: 16px;
+    }
+
+    .message-box {
+        padding: 30px;
+    }
+}
