@@ -56,54 +56,56 @@ async function updateEmployee() {
     const phone = ephone.value.trim()
 
     /* PHONE VALIDATION */
+
     const phonePattern = /^[0-9]{10}$/
 
     if (!phonePattern.test(phone)) {
+
         alert("Phone number must be exactly 10 digits")
+
         return
+
     }
 
     const emp = {
+
         name: ename.value,
         email: eemail.value,
         phone: phone,
         employeeType: document.getElementById("empType").innerText,
         role: "Employee"
+
     }
 
     const res = await fetch(API + "/api/emp/" + employeeId, {
+
         method: "PUT",
+
         headers: {
             "Content-Type": "application/json",
             "Authorization": "Bearer " + token
         },
+
         body: JSON.stringify(emp)
+
     })
 
     if (!res.ok) {
+
         const text = await res.text()
         alert(text)
         return
+
     }
 
     const updated = await res.json()
 
     localStorage.setItem("user", JSON.stringify(updated))
 
-
     alert("Details updated successfully")
 
-        clearForm()
-
-
-
-}
-
-function clearForm() {
-
-    document.getElementById("ename").value = "";
-    document.getElementById("eemail").value = "";
-    document.getElementById("ephone").value = "";
+    loadEmployee()
+    loadEmployee()
 
 }
 
