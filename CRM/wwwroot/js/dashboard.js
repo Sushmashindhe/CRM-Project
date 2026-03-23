@@ -80,7 +80,7 @@ Reject
 
 async function deleteRequirement(id) {
 
-    if (!confirm("Reject this requirement?")) return;
+    //if (!confirm("Reject this requirement?")) return;
 
     const res = await fetch(API + "/api/customerrequirements/requirement/" + id, {
         method: "DELETE",
@@ -436,7 +436,7 @@ function editManager(id, name, email, type, placeOfBirth = "", phone = "") {
 
 async function deleteManager(id) {
 
-    if (!confirm("Delete manager?")) return;
+    //if (!confirm("Delete manager?")) return;
 
     const res = await fetch(API + "/api/managers/" + id, {
         method: "DELETE",
