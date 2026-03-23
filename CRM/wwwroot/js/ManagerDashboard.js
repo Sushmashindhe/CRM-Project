@@ -133,12 +133,14 @@ async function updateManager() {
         user.phone = phone;
         localStorage.setItem("user", JSON.stringify(user));
 
-        loadManager();
+        //loadManager();
         showToast("Manager updated successfully", "success");
     } catch (err) {
         console.error(err);
         showToast("Error updating manager", "error");
     }
+    clearForm()
+    loadManager();
 }
 
 
@@ -340,7 +342,11 @@ async function loadRequirements() {
 
     document.getElementById("requirementsTable").innerHTML = html;
 }
-
+function clearForm() {
+    document.getElementById("editName").value = "";
+    document.getElementById("editEmail").value = "";
+    document.getElementById("editPhone").value = "";
+}
 async function toggleStatus(id, currentStatus) {
 
     let newStatus = currentStatus === "Completed"

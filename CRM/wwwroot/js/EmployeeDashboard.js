@@ -102,8 +102,8 @@ async function updateEmployee() {
     localStorage.setItem("user", JSON.stringify(updated))
 
     showToast("Details updated successfully", "success")
-
-    loadEmployee()
+    clearForm()
+    //loadEmployee()
 
 }
 
@@ -223,6 +223,16 @@ function showToast(message, type = "success") {
     const toast = new bootstrap.Toast(toastElement);
     toast.show();
 }
+function clearForm() {
+
+    document.getElementById("ename").value = "";
+
+    document.getElementById("eemail").value = "";
+
+    document.getElementById("ephone").value = "";
+
+}
+
 function loadAssignedRequirements() {
 
     fetch(API + "/api/customerrequirements/employee", {
