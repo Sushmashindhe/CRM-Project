@@ -1,6 +1,9 @@
 ﻿using CRM.Data;
 using CRM.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -49,5 +52,41 @@ public class ProjectUpdatesController : ControllerBase
         _context.SaveChanges();
 
         return Ok(update);
+    }
+
+    [HttpGet("manager")]
+    [Authorize(Roles = "Manager")]
+    public IActionResult GetUpdatesForManager()
+    {
+        var managerId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+        var updates = _context.ProjectUpdates
+            .Include(u => u.Employee)
+            .Where(u => u.Employee.ManagerId == managerId)
+            .Select(u => new {
+                u.Id,
+                u.EmployeeId,
+                u.Employee.Name,
+                u.ProjectName,
+                u.UpdateText,
+                u.CreatedAt,
+                u.Feedback
+            })
+            .ToList();
+
+        return Ok(updates);
+    }
+
+    [HttpGet("employee")]
+    [Authorize(Roles = "Employee")]
+    public IActionResult GetUpdatesForEmployee()
+    {
+        var employeeId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+        var updates = _context.ProjectUpdates
+            .Where(u => u.EmployeeId == employeeId)
+            .ToList();
+
+        return Ok(updates);
     }
 }

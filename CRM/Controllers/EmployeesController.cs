@@ -144,4 +144,22 @@ public IActionResult GetTotalManagers()
 
         return Ok(data);
     }
+
+    [HttpPut("feedback/{id}")]
+    [Authorize(Roles = "Manager")]
+    public IActionResult GiveFeedback(int id, [FromBody] string feedback)
+    {
+        var managerId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+        var update = _context.ProjectUpdates
+            .FirstOrDefault(u => u.Id == id && u.Employee.ManagerId == managerId);
+
+        if (update == null)
+            return Unauthorized();
+
+        update.Feedback = feedback;
+        _context.SaveChanges();
+
+        return Ok(update);
+    }
 }

@@ -177,8 +177,11 @@ function loadEmployeeUpdates() {
 
     const user = JSON.parse(localStorage.getItem("user"));
 
-    fetch("https://localhost:7192/api/projectupdates")
-        .then(res => res.json())
+fetch(API + "/api/projectupdates/employee", {
+    headers: {
+        "Authorization": "Bearer " + token
+    }
+})        .then(res => res.json())
         .then(data => {
 
             let table = document.getElementById("employeeUpdates");

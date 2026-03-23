@@ -11,5 +11,8 @@
         public string? Feedback { get; set; }   // NEW
 
         public DateTime CreatedAt { get; set; }
+
+        public Employees? Employee { get; set; }
+
     }
 }
