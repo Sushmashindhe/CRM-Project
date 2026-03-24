@@ -99,7 +99,7 @@ namespace CRM.Controllers
 
         [HttpPut("status/{id}")]
         [Authorize(Roles = "Manager,SeniorManager")]
-        public IActionResult UpdateStatus(int id)
+        public IActionResult ToggleStatus(int id)
         {
             var manager = _context.Managers.Find(id);
 
@@ -110,7 +110,10 @@ namespace CRM.Controllers
 
             _context.SaveChanges();
 
-            return Ok(new { status = manager.Status });
+            return Ok(new
+            {
+                status = manager.Status   // ✅ IMPORTANT
+            });
         }
 
         [HttpPut("assign")]
@@ -143,5 +146,7 @@ namespace CRM.Controllers
                 message = $"Assigned to {manager.Name}"
             });
         }
+
+
     }
 }

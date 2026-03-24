@@ -32,6 +32,25 @@ function loadManager() {
 
 }
 
+// Ensure the status button reflects the stored user status on load
+function initManagerStatus() {
+    const user = JSON.parse(localStorage.getItem("user")) || {};
+
+    // Support both boolean flag and string-based status coming from API/login
+    if (typeof user.isActive === "boolean") {
+        updateStatusButton(user.isActive);
+    } else if (user.status || user.Status) {
+        const statusStr = (user.status || user.Status).toString();
+        updateStatusButton(statusStr.toLowerCase() === "active");
+        // normalize to boolean for future toggles
+        user.isActive = statusStr.toLowerCase() === "active";
+        localStorage.setItem("user", JSON.stringify(user));
+    } else {
+        // default: assume active
+        updateStatusButton(user.isActive ?? true);    }
+
+}
+
 function fillManagerEdit() {
 
     const user = JSON.parse(localStorage.getItem("user")) || {}
@@ -85,6 +104,7 @@ function updateStatusButton(isActive) {
     }
 
 }
+
 
 async function updateManager() {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -193,6 +213,7 @@ function loadTypes() {
 let employeeId = null
 let employees = []
 let selectedRequirementId = null;
+let statusToggleInProgress = false;
 
 async function saveEmployee() {
 
@@ -655,17 +676,18 @@ async function toggleManagerStatus() {
 
         }
 
-        // flip status locally
+        // ✅ GET UPDATED STATUS FROM BACKEND
 
-        user.isActive = !user.isActive
+        const updatedUser = await res.json()
+
+        user.status = updatedUser.status                   
+        user.isActive = updatedUser.status === "Active" 
 
         localStorage.setItem("user", JSON.stringify(user))
 
         updateStatusButton(user.isActive)
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
         console.error(error)
 
@@ -674,6 +696,7 @@ async function toggleManagerStatus() {
     }
 
 }
+
 
 
 
@@ -820,6 +843,6 @@ function sendFeedback(updateId) {
 /* INIT */
 
 loadManager();
+initManagerStatus();   // ✅ ADD THIS
 loadEmployees();
-
 loadRequirements();

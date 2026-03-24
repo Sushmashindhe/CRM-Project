@@ -62,7 +62,6 @@ function login() {
 
 
 
-
             localStorage.setItem("token", user.token);
             localStorage.setItem("role", user.role);
 
@@ -74,7 +73,9 @@ function login() {
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
-                managerType: user.managerType
+                managerType: user.managerType,
+                status: user.status,              // ✅ ADD THIS
+                isActive: user.status === "Active" // ✅ ADD THIS
             }));
 
             window.location.href = "ManagerDashboard.html";
