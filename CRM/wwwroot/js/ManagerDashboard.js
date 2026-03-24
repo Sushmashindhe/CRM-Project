@@ -210,7 +210,7 @@ async function saveEmployee() {
         return;
     }
     if (!email.includes("@")) {
-        showToast("Email must contain @ symbol");
+        showToast("Email must contain @ symbol","error");
         return;
     }
 
