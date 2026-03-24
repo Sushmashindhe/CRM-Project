@@ -111,7 +111,7 @@ async function updateEmployee() {
     //loadEmployee()
 
 
-    alert("Details updated successfully")
+    //alert("Details updated successfully")
 
     loadEmployee()
     loadEmployee()

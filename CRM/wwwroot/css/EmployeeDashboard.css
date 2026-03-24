@@ -1,8 +1,9 @@
-﻿/* GLOBAL */
+﻿/* ================= GLOBAL ================= */
 
 :root {
     --primary: #1d3557;
     --primary-soft: #457b9d;
+    --accent: #2563eb;
     --bg: #f4f6f9;
     --text: #1f2937;
     --card-bg: #ffffff;
@@ -13,9 +14,10 @@ body {
     font-family: 'Segoe UI', system-ui, sans-serif;
     color: var(--text);
     margin: 0;
+    animation: fadeInPage 0.4s ease;
 }
 
-/* HEADER (kept same colors, refined look) */
+/* ================= HEADER ================= */
 
 .header {
     background: linear-gradient(135deg, #1d3557, #457b9d);
@@ -23,11 +25,61 @@ body {
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 8px 20px rgba(29, 53, 87, 0.25);
-    font-weight: 500;
-    letter-spacing: 0.4px;
+    font-size: 20px;
+    font-weight: 600;
 }
 
-/* CARDS (more premium + softer like senior/manager dashboards) */
+/* ================= SECTION CONTAINER ================= */
+
+.section-container {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    margin-bottom: 25px;
+    border: 1px solid #e5e7eb;
+    transition: all 0.25s ease;
+}
+
+    .section-container:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+/* ================= UNIFIED HEADINGS ================= */
+
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1d3557;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+}
+
+    /* ICON STYLE */
+
+    .section-title i {
+        font-size: 18px;
+        opacity: 0.9;
+    }
+
+    /* underline accent */
+
+    .section-title::after {
+        content: "";
+        width: 40px;
+        height: 3px;
+        background: #457b9d;
+        position: absolute;
+        bottom: -6px;
+        left: 0;
+        border-radius: 2px;
+    }
+
+/* ================= CARDS ================= */
 
 .card {
     background: var(--card-bg);
@@ -42,7 +94,95 @@ body {
         box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     }
 
-/* UNAUTHORIZED SCREEN (modern glass effect) */
+/* ================= INPUTS ================= */
+
+input, textarea, select {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    border-radius: 8px !important;
+    border: 1px solid #d1d5db !important;
+    padding: 10px !important;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+    input:focus, textarea:focus, select:focus {
+        border-color: var(--accent) !important;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15) !important;
+        outline: none;
+    }
+
+/* ================= BUTTONS ================= */
+
+.btn-primary {
+    background: linear-gradient(90deg, #2563eb, #1d4ed8);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+    .btn-primary:hover {
+        transform: translateY(-1px) scale(1.02);
+        box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
+    }
+
+/* ================= TABLE ================= */
+
+.table {
+    border-radius: 12px;
+    overflow: hidden;
+    background: white;
+}
+
+    .table th {
+        background: #1d3557;
+        color: white;
+        font-weight: 500;
+        padding: 12px;
+    }
+
+    .table td {
+        padding: 12px;
+        font-size: 14px;
+    }
+
+    .table tbody tr {
+        transition: all 0.2s ease;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+        .table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+/* ================= BADGES ================= */
+
+.badge {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 999px;
+    font-weight: 500;
+}
+
+/* STATUS COLORS */
+
+.bg-success {
+    background: linear-gradient(90deg, #10b981, #059669) !important;
+    color: white;
+}
+
+.bg-warning {
+    background: linear-gradient(90deg, #f59e0b, #d97706) !important;
+    color: white;
+}
+
+.bg-danger {
+    background: linear-gradient(90deg, #ef4444, #dc2626) !important;
+    color: white;
+}
+
+/* ================= UNAUTHORIZED ================= */
 
 .unauthorized-screen {
     position: fixed;
@@ -55,7 +195,7 @@ body {
     z-index: 99999;
 }
 
-/* MESSAGE BOX (clean + premium) */
+/* MESSAGE BOX */
 
 .message-box {
     text-align: center;
@@ -72,12 +212,24 @@ body {
         margin-bottom: 15px;
     }
 
-/* ANIMATION (subtle like modern dashboards) */
+/* ================= ANIMATIONS ================= */
 
 @keyframes fadeIn {
     from {
         opacity: 0;
         transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInPage {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
     }
 
     to {

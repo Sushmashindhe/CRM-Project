@@ -1,43 +1,197 @@
-﻿body {
-    background: #f4f6f9;
-    font-family: "Segoe UI", sans-serif;
+﻿/* GLOBAL */
+
+:root {
+    --primary: #1f2937;
+    --primary-soft: #374151;
+    --accent: #2563eb;
+    --bg: #f4f6f9;
+    --card-bg: #ffffff;
+    --text: #1f2937;
 }
+
+body {
+    background: linear-gradient(135deg, #f4f6f9, #eef2f7);
+    font-family: "Segoe UI", system-ui, sans-serif;
+    color: var(--text);
+    margin: 0;
+}
+
+/* HEADER */
 
 .dashboard-header {
-    background: #1f2937;
+    background: linear-gradient(90deg, var(--primary), var(--primary-soft));
     color: white;
-    padding: 18px;
-    border-radius: 8px;
+    padding: 20px 24px;
+    border-radius: 12px;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.2);
 }
+
+/* CARDS */
 
 .card {
-    border: none;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 18px;
+    background: var(--card-bg);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
 }
+
+    /* subtle shine effect */
+    .card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(transparent, rgba(0,0,0,0.02));
+        pointer-events: none;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+    }
+
+    /* CARD TITLE */
+
+    .card h5 {
+        font-weight: 600;
+        color: #111827;
+        margin-bottom: 12px;
+    }
+
+/* INPUTS (NEW - makes forms look better) */
+
+input, textarea, select {
+    border-radius: 8px !important;
+    border: 1px solid #d1d5db !important;
+    padding: 10px !important;
+    transition: all 0.2s ease;
+}
+
+    input:focus, textarea:focus, select:focus {
+        border-color: var(--accent) !important;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15) !important;
+        outline: none;
+    }
+
+/* BUTTONS */
 
 .btn-primary {
-    background: #2563eb;
+    background: linear-gradient(90deg, #2563eb, #1d4ed8);
     border: none;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-weight: 500;
+    transition: all 0.2s ease;
 }
 
-.table th {
-    background: #374151;
-    color: white;
+    .btn-primary:hover {
+        background: linear-gradient(90deg, #1d4ed8, #1e40af);
+        transform: translateY(-1px) scale(1.02);
+        box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
+    }
+
+/* TABLE */
+
+.table {
+    border-radius: 12px;
+    overflow: hidden;
+    background: white;
 }
+
+    .table th {
+        background: var(--primary-soft);
+        color: white;
+        font-weight: 500;
+        padding: 12px;
+        letter-spacing: 0.3px;
+    }
+
+    .table td {
+        padding: 12px;
+        vertical-align: middle;
+    }
+
+    .table tbody tr {
+        transition: all 0.2s ease;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+        .table tbody tr:hover {
+            background: #f8fafc;
+            transform: scale(1.001);
+        }
+
+/* BADGES */
 
 .badge {
-    padding: 5px 8px;
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 999px;
+    font-weight: 500;
 }
 
+/* STATUS COLORS */
+
 .bg-warning {
-    background-color: #f59e0b !important;
+    background: linear-gradient(90deg, #f59e0b, #d97706) !important;
+    color: white;
 }
 
 .bg-success {
-    background-color: #10b981 !important;
+    background: linear-gradient(90deg, #10b981, #059669) !important;
+    color: white;
 }
 
 .bg-danger {
-    background-color: #ef4444 !important;
+    background: linear-gradient(90deg, #ef4444, #dc2626) !important;
+    color: white;
+}
+
+/* SECTION SPACING */
+
+.section {
+    margin-top: 24px;
+}
+
+    /* HEADINGS (MATCH ALL SECTIONS) */
+
+    .section h3, .card h5 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+/* SCROLLBAR */
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5f5;
+    border-radius: 10px;
+}
+
+/* SMALL ANIMATION */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeIn 0.3s ease;
 }
