@@ -91,7 +91,7 @@ async function deleteRequirement(id) {
 
     if (res.ok) {
         document.getElementById("req-" + id).remove();
-        showToast("Requirement rejected");
+        showToast("Requirement rejected", "error");
     } else {
         showToast("Failed to reject", "error");
     }
@@ -446,7 +446,7 @@ async function deleteManager(id) {
     });
 
     if (res.ok) {
-        showToast("Manager deleted");
+        showToast("Manager deleted", "error");
         loadManagers();
     } else {
         showToast("Delete failed", "error");

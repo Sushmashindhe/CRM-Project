@@ -618,7 +618,7 @@ async function deleteEmployee(id) {
         return;
     }
 
-    showToast("Employee deleted successfully", "success");
+    showToast("Employee deleted successfully", "error");
     loadEmployees();
 }
 async function toggleManagerStatus() {
