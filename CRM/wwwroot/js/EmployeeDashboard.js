@@ -115,10 +115,7 @@ async function updateEmployee() {
 
     loadEmployee()
     loadEmployee()
-
-
 }
-
 
 /* LOGOUT */
 
