@@ -138,16 +138,11 @@ async function updateManager() {
         //loadManager();
         showToast("Manager updated successfully", "success");
 
-        alert("Manager updated successfully");
 
     } catch (err) {
         console.error(err);
         showToast("Error updating manager", "error");
     }
-
-
-    clearForm()
-    loadManager();
 
 
     clearForm()
@@ -286,6 +281,13 @@ async function saveEmployee() {
         showToast("Failed to save employee", "error");
         return;
     }
+
+            // ✅ ADD THIS
+            if (employeeId == null) {
+                showToast("Employee added successfully", "success");
+            } else {
+                showToast("Employee updated successfully", "success");
+            }
 
     employeeId = null
 
@@ -606,16 +608,18 @@ function editEmployee(id, name, email, password, phone, pob, type) {
 /* DELETE */
 
 async function deleteEmployee(id) {
-
-    await fetch("/api/employees/" + id, {
+    const res = await fetch(API + "/api/employees/" + id, {
         method: "DELETE",
-        headers: {
-            "Authorization": "Bearer " + token
-        }
-    })
+        headers: { "Authorization": "Bearer " + token }
+    });
 
-    loadEmployees()
+    if (!res.ok) {
+        showToast("Failed to delete employee", "error");
+        return;
+    }
 
+    showToast("Employee deleted successfully", "success");
+    loadEmployees();
 }
 async function toggleManagerStatus() {
 
@@ -756,23 +760,34 @@ Give Feedback
         });
 }
 loadUpdates();
-function showToast(message, type = "success") {
+let toastInstance = null;
 
-    const toastElement = document.getElementById("liveToast");
-    const toastMessage = document.getElementById("toastMessage");
+    function showToast(message, type = "success") {
+        const toastEl = document.getElementById("liveToast");
+        const toastMessage = document.getElementById("toastMessage");
 
-    toastMessage.innerText = message;
+        if (!toastEl) {
+            console.error("Toast element not found!");
+            return;
+        }
 
-    toastElement.className = "toast align-items-center border-0";
+        toastMessage.innerText = message;
 
-    if (type === "success")
-        toastElement.classList.add("text-bg-success");
-    else
-        toastElement.classList.add("text-bg-danger");
+        // Remove old classes
+        toastEl.classList.remove("text-bg-success", "text-bg-danger");
 
-    const toast = new bootstrap.Toast(toastElement);
-    toast.show();
-}
+        // Add new class
+        toastEl.classList.add(type === "success" ? "text-bg-success" : "text-bg-danger");
+
+        // ✅ Create instance ONLY ONCE
+        if (!toastInstance) {
+            toastInstance = new bootstrap.Toast(toastEl, {
+                delay: 3000
+            });
+        }
+
+        toastInstance.show();
+    }
 
 function sendFeedback(updateId) {
 
