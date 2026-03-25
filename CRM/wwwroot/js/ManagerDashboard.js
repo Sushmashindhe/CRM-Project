@@ -36,19 +36,12 @@ function loadManager() {
 function initManagerStatus() {
     const user = JSON.parse(localStorage.getItem("user")) || {};
 
-    // Support both boolean flag and string-based status coming from API/login
-    if (typeof user.isActive === "boolean") {
-        updateStatusButton(user.isActive);
-    } else if (user.status || user.Status) {
-        const statusStr = (user.status || user.Status).toString();
-        updateStatusButton(statusStr.toLowerCase() === "active");
-        // normalize to boolean for future toggles
-        user.isActive = statusStr.toLowerCase() === "active";
-        localStorage.setItem("user", JSON.stringify(user));
-    } else {
-        // default: assume active
-        updateStatusButton(user.isActive ?? true);    }
+    const isActive = user.status === "Active";
 
+    updateStatusButton(isActive);
+
+    user.isActive = isActive;
+    localStorage.setItem("user", JSON.stringify(user));
 }
 
 function fillManagerEdit() {

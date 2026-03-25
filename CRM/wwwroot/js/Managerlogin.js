@@ -74,8 +74,8 @@ function login() {
                 email: user.email,
                 phone: user.phone,
                 managerType: user.managerType,
-                status: user.status,              // ✅ ADD THIS
-                isActive: user.status === "Active" // ✅ ADD THIS
+                status: user.status,
+                isActive: user.status === "Active"
             }));
 
             window.location.href = "ManagerDashboard.html";

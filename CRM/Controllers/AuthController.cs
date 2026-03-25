@@ -59,7 +59,9 @@ namespace CRM.Controllers
                     name = manager.Name,
                     email = manager.Email,
                     phone = manager.Phone,   // ✅ add this
-                    managerType = manager.ManagerType
+                    managerType = manager.ManagerType,
+                    status = manager.Status   // ✅ ADD THIS
+
                 });
             }
 

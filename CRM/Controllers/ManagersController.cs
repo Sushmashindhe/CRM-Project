@@ -23,6 +23,9 @@ namespace CRM.Controllers
         public IActionResult AddManager([FromBody] Managers manager)
         {
             manager.Role = "Manager";
+
+            // ✅ SET DEFAULT STATUS
+            manager.Status = "Active";
             // HASH PASSWORD
             manager.Password = BCrypt.Net.BCrypt.HashPassword(manager.Password);
             _context.Managers.Add(manager);
