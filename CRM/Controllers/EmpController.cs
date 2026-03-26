@@ -72,6 +72,8 @@ namespace CRM.Controllers
             });
         }
 
+        
+
         /* ============================
            View Employee Profile
         ============================ */
@@ -116,6 +118,11 @@ namespace CRM.Controllers
 
             if (existing == null)
                 return NotFound();
+
+            if (_context.Employees.Any(e => e.Email == emp.Email))
+            {
+                return BadRequest("Email already exists");
+            }
 
             existing.Name = emp.Name;
             existing.Email = emp.Email;

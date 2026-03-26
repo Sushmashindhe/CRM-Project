@@ -46,7 +46,7 @@ public class EmployeesController : ControllerBase
 
 
 
-    [HttpPost]
+[HttpPost]
 [Authorize(Roles = "Manager")]
 public IActionResult AddEmployee([FromBody] Employees emp)
 {
@@ -57,7 +57,12 @@ public IActionResult AddEmployee([FromBody] Employees emp)
         if (managerClaim == null)
             return Unauthorized("Manager ID missing in token");
 
-        int managerId = int.Parse(managerClaim.Value);
+            if (_context.Employees.Any(e => e.Email == emp.Email))
+            {
+                return BadRequest("Email already exists");
+            }
+
+            int managerId = int.Parse(managerClaim.Value);
 
         emp.Role = "Employee";
         emp.ManagerId = managerId; // ✅ THIS FIXES YOUR ISSUE

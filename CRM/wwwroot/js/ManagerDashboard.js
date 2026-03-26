@@ -249,7 +249,14 @@ async function saveEmployee() {
         return;
     }
 
-  
+    let emailExists = employees.some(emp =>
+        emp.email.toLowerCase() === email.toLowerCase()
+    );
+
+    if (emailExists) {
+        showToast("Email already exists", "error");
+        return;
+    }
 
 
 

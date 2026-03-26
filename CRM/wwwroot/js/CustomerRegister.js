@@ -5,6 +5,7 @@
     const password = document.getElementById("password").value;
     const phone = document.getElementById("phone").value.trim();
 
+    const nameError = document.getElementById("nameError");
     const phoneError = document.getElementById("phoneError");
     const successMsg = document.getElementById("successMsg");
     const failMsg = document.getElementById("failMsg");
@@ -28,6 +29,11 @@
         return;
     }
 
+    if (name === "")
+    {
+        nameError.style.display = "block";
+        return;
+    }
     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
 
     if (!passwordPattern.test(password)) {
