@@ -65,7 +65,7 @@ public class ProjectUpdatesController : ControllerBase
             .Select(u => new {
                 u.Id,
                 u.EmployeeId,
-                u.EmployeeName,  // directly from table
+                u.EmployeeName,  // directly from table 
                 u.ProjectName,
                 u.UpdateText,
                 u.CreatedAt,
