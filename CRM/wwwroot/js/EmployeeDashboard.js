@@ -2,6 +2,7 @@
 
 const token = localStorage.getItem("token")
 const role = localStorage.getItem("role")
+const emailError = document.getElementById("emailError");
 
 /* AUTH CHECK */
 
@@ -43,7 +44,7 @@ async function loadEmployee() {
     document.getElementById("empPhone").innerText = user.phone ?? "Not Available";
 
     document.getElementById("ename").value = user.name;
-    document.getElementById("eemail").value = user.email;
+    //document.getElementById("eemail").value = user.email;
 
     // Save updated user to localStorage
     localStorage.setItem("user", JSON.stringify(user));
@@ -54,6 +55,7 @@ async function loadEmployee() {
 async function updateEmployee() {
 
     const phone = document.getElementById("ephone").value.trim()
+    
 
     /* PHONE VALIDATION */
 
@@ -64,9 +66,16 @@ async function updateEmployee() {
 
         showToast("Phone number must be exactly 10 digits", "error")
 
-        alert("Phone number must be exactly 10 digits")
 
         return
+
+    }
+ 
+    const email = document.getElementById("eemail").value.trim()
+    if (!email.includes("@")) {
+
+        showToast("Email must contain @", "error");
+        return;
 
     }
 
@@ -74,11 +83,15 @@ async function updateEmployee() {
 
         name: ename.value,
         email: eemail.value,
+
         phone: phone,
         employeeType: document.getElementById("empType").innerText,
         role: "Employee"
 
+        
+
     }
+    
 
     const res = await fetch(API + "/api/emp/" + employeeId, {
 
@@ -108,10 +121,7 @@ async function updateEmployee() {
 
     showToast("Details updated successfully", "success")
     clearForm()
-    //loadEmployee()
-
-
-    //alert("Details updated successfully")
+    
 
     loadEmployee()
     loadEmployee()
@@ -144,11 +154,23 @@ function sendUpdate() {
         return;
     }
 
+    const projectName = document.getElementById("projectName").value.trim();
+    const updateText = document.getElementById("updateText").value.trim();
+
+    /* VALIDATION */
+
+    if (!projectName || !updateText) {
+
+        showToast("Please fill all fields before submitting", "error");
+
+        return; // 🚫 stop API call
+    }
+
     const update = {
         employeeId: user.id,
         employeeName: user.name,
-        projectName: document.getElementById("projectName").value,
-        updateText: document.getElementById("updateText").value
+        projectName: projectName,
+        updateText: updateText
     };
 
     fetch("https://localhost:7192/api/projectupdates", {
@@ -178,7 +200,6 @@ function sendUpdate() {
             console.error(err);
             showToast("Error: " + err.message, "error");
         });
-
 }
 
 function loadEmployeeUpdates() {

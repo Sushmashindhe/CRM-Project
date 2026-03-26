@@ -117,6 +117,13 @@ async function updateManager() {
         return; // silently block
     }
 
+    if (!email.includes("@")) {
+
+        showToast("Email must contain @", "error");
+        return;
+
+    }
+
     try {
         const res = await fetch(API + "/api/managers/" + user.id, {
             method: "PUT",

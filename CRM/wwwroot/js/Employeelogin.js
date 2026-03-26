@@ -20,7 +20,7 @@ async function login() {
 
     /* EMAIL VALIDATION */
 
-    if (!email.includes("@")) {
+   if (!email.includes("")) {
 
         emailError.style.display = "block";
         return;
