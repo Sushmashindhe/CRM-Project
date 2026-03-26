@@ -16,10 +16,21 @@ public class CustomersController : ControllerBase
 
     // CUSTOMER REGISTER
     [HttpPost("register")]
-    public IActionResult Register(Customers customer)
+    public IActionResult Register([FromBody] Customers customer)
     {
+        // ✅ CHECK IF EMAIL ALREADY EXISTS
+        var existingCustomer = _context.Customers
+            .FirstOrDefault(x => x.Email.ToLower() == customer.Email.ToLower());
+
+        if (existingCustomer != null)
+        {
+            return BadRequest("Email already registered");
+        }
+
+        // ✅ HASH PASSWORD
         customer.Password = BCrypt.Net.BCrypt.HashPassword(customer.Password);
 
+        // ✅ SAVE CUSTOMER
         _context.Customers.Add(customer);
         _context.SaveChanges();
 
@@ -47,4 +58,5 @@ public class CustomersController : ControllerBase
             user = customer
         });
     }
+    
 }

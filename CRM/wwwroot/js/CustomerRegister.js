@@ -5,12 +5,14 @@
     const password = document.getElementById("password").value;
     const phone = document.getElementById("phone").value.trim();
 
+    const emailError = document.getElementById("emailError");
     const nameError = document.getElementById("nameError");
     const phoneError = document.getElementById("phoneError");
     const successMsg = document.getElementById("successMsg");
     const failMsg = document.getElementById("failMsg");
     const passwordError = document.getElementById("passwordError");
 
+    emailError.style.display = "none";
     phoneError.style.display = "none";
     successMsg.style.display = "none";
     failMsg.style.display = "none";
@@ -58,6 +60,14 @@
             window.location.href = "CustomerLogin.html";
         }, 1500);
     } else {
+        const errorText = await res.text();
+
+        if (errorText.includes("Email already")) {
+            failMsg.innerText = "Email already registered";
+        } else {
+            failMsg.innerText = "Registration failed. Please try again.";
+        }
+
         failMsg.style.display = "block";
     }
 }
