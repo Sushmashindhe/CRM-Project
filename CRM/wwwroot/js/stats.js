@@ -77,11 +77,27 @@ async function loadEmpPerManager() {
         data: {
             labels: data.map(x => x.managerName),
             datasets: [{
+                label: '',
                 data: data.map(x => x.count),
                 backgroundColor: ['#3A9DD2', '#00AD82'],
                 borderRadius: 6
             }]
+        },
+        options: {
+
+            responsive: true,
+
+            plugins: {
+
+                legend: {
+
+                    display: false
+                }
+
+            }
+
         }
+
     });
 }
 
@@ -104,10 +120,25 @@ async function loadEmployeeTypes() {
         data: {
             labels: data.map(x => x.role),
             datasets: [{
+                label: '',
                 data: data.map(x => x.count),
                 backgroundColor: ['#3A9DD2', '#00AD82'],
                 borderRadius: 6
             }]
+        },
+        options: {
+
+            responsive: true,
+
+            plugins: {
+
+                legend: {
+
+                    display: false
+                }
+
+            }
+
         }
     });
 }
